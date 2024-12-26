@@ -1,84 +1,84 @@
-import { useState, useContext } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card } from "@/components/ui/card"
-import { GlobalContext } from "./context/GlobalContextWithType"
+import { useState, useEffect } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import PatientPage from "./components/Patient-page"
 
-import { PatientHeader } from "./components/patient-header"
-import { Sidebar } from "./components/sidebar"
-import { VitalSignsForm } from "./components/vital-signs-form"
-import { FloatingMicButton } from "./components/floating-mic-button"
-import { SidebarWithIframe } from "./components/sidebar-with-iframe"
+export default function App() {
+  const [password, setPassword] = useState("")
+  const [token, setToken] = useState("")
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isPasswordVerified, setIsPasswordVerified] = useState(false)
 
-export default function PatientPage() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const { message } = useContext(GlobalContext);
+  const actualPass = import.meta.env.VITE_PASSWORD
 
-  const handleMicClick = () => {
-    setIsSidebarOpen(true)
+  useEffect(() => {
+    const storedToken = localStorage.getItem("bearerToken")
+    if (storedToken) {
+      setToken(storedToken)
+      setIsAuthenticated(true)
+      setIsPasswordVerified(true)
+    }
+  }, [])
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === actualPass) {
+      setIsPasswordVerified(true)
+    }
   }
 
-  const handleSidebarClose = () => {
-    setIsSidebarOpen(false)
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (token.length > 0) {
+      localStorage.setItem("bearerToken", token)
+      setIsAuthenticated(true)
+    }
   }
 
-  console.log(message)
 
-  return (
-    <div className="container mx-auto p-4">
-      <PatientHeader />
-      <div className="flex gap-6 mt-6">
-        <Sidebar />
-        <main className="flex-1">
-          <Tabs defaultValue="assessment" className="w-full">
-            <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-              <TabsTrigger 
-                value="health-summary"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Health Summary
-              </TabsTrigger>
-              <TabsTrigger 
-                value="assessment" 
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Assessment
-              </TabsTrigger>
-              <TabsTrigger 
-                value="medical-file"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Medical File
-              </TabsTrigger>
-              <TabsTrigger 
-                value="vitals"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Vitals
-              </TabsTrigger>
-              <TabsTrigger 
-                value="laboratory"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Laboratory
-              </TabsTrigger>
-              <TabsTrigger 
-                value="diagnostic"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Diagnostic Result
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="assessment" className="mt-6">
-              <Card className="p-6">
-                <VitalSignsForm chiefComplaint={message?.chiefComplaints || ""} significantSigns={message?.significantSigns || ""}  />
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </main>
+  if (!isPasswordVerified) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Card className="w-96">
+          <CardContent className="pt-6">
+            <form onSubmit={handlePasswordSubmit}>
+              <Input
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mb-4"
+              />
+              <Button type="submit" className="w-full mb-4">Submit</Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-      <FloatingMicButton onClick={handleMicClick} />
-      <SidebarWithIframe isOpen={isSidebarOpen} onClose={handleSidebarClose} />
-    </div>
-  )
-}
+    )
+  }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Card className="w-96">
+          <CardContent className="pt-6">
+            <form onSubmit={handleTokenSubmit}>
+              <Input
+                type="text"
+                placeholder="Enter bearer token"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                className="mb-4"
+              />
+              <Button type="submit" className="w-full mb-4">Submit</Button>
+            </form>
+            
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return <PatientPage token={token} />
+}
