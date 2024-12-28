@@ -3,10 +3,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import PatientPage from "./components/Patient-page"
+import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group"
 
 export default function App() {
   const [password, setPassword] = useState("")
   const [token, setToken] = useState("")
+  const [env, setEnv] = useState("dev")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isPasswordVerified, setIsPasswordVerified] = useState(false)
 
@@ -14,6 +16,9 @@ export default function App() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("bearerToken")
+    const env = localStorage.getItem("env")
+
+    setEnv(env || "dev")
     if (storedToken) {
       setToken(storedToken)
       setIsAuthenticated(true)
@@ -36,7 +41,6 @@ export default function App() {
     }
   }
 
-
   if (!isPasswordVerified) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -50,7 +54,9 @@ export default function App() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="mb-4"
               />
-              <Button type="submit" className="w-full mb-4">Submit</Button>
+              <Button type="submit" className="w-full mb-4">
+                Submit
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -71,14 +77,38 @@ export default function App() {
                 onChange={(e) => setToken(e.target.value)}
                 className="mb-4"
               />
-              <Button type="submit" className="w-full mb-4">Submit</Button>
+              <div className="flex flex-col gap-2 mb-4">
+                <RadioGroup
+                  defaultValue="dev"
+                  name="env"
+                  onValueChange={(e) => {
+                    localStorage.setItem("env", e)
+                    setEnv(e)
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="dev" value="dev" />
+                    <label htmlFor="dev" className="text-sm">
+                      Dev
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="prod" value="prod" />
+                    <label htmlFor="prod" className="text-sm">
+                      Prod
+                    </label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <Button type="submit" className="w-full mb-4">
+                Submit
+              </Button>
             </form>
-            
           </CardContent>
         </Card>
       </div>
     )
   }
 
-  return <PatientPage token={token} />
+  return <PatientPage token={token} env={env} />
 }

@@ -6,9 +6,10 @@ interface SidebarWithIframeProps {
   isOpen: boolean
   onClose: () => void
   token: string
+  isVisible: boolean
 }
 
-export function SidebarWithIframe({ isOpen, onClose, token }: SidebarWithIframeProps) {
+export function SidebarWithIframe({ isOpen, onClose, token, isVisible }: SidebarWithIframeProps) {
   const { setMessage } = useContext(GlobalContext);
   const IframeUrl = import.meta.env.VITE_IFRAME_URL + token
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -28,13 +29,14 @@ export function SidebarWithIframe({ isOpen, onClose, token }: SidebarWithIframeP
   }, [setMessage]);
 
   return (
-    <div className={`fixed inset-y-0 right-0 transform ${isOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300`}>
+    <div className={`fixed inset-y-0 right-0 transform transition-transform duration-300`}>
       <Sheet open={isOpen} onOpenChange={onClose} modal={false}>
-        <SheetContent side="right" className="w-2/5">
+        <SheetContent side="right" className={`w-2/5 ${isVisible ? 'block' : 'hidden'}`}>
           <SheetHeader>
-            <SheetTitle>Consultation Assitant</SheetTitle>
+            <SheetTitle>Consultation Assitant {isVisible ? "vis" :"no"}</SheetTitle>
           </SheetHeader>
           <div className="mt-6 h-[calc(100vh-100px)]">
+          {isVisible}
             <iframe
               ref={iframeRef}
               src={IframeUrl}
