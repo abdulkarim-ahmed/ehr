@@ -65,10 +65,13 @@ export default function PatientPage({
       switch (section.title) {
         case "Chief Complaint":
         case "Chief Complaints":
+        case "Chief Complaint & History Of Present Illness":
           chiefComplaint = sanitizeString(content.join(" "))
           break
         case "Significant Sign":
         case "Significant Signs":
+        case "Significant Sign & Symptoms":
+        case "Physical Examination (Significant Signs)":
           significantSign = sanitizeString(content.join(" "))
           break
       }
@@ -83,8 +86,6 @@ export default function PatientPage({
     localStorage.clear()
     window.location.reload()
   }
-
-  console.log(message)
 
   return (
     <div className="container mx-auto p-4">
