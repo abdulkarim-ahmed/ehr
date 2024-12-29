@@ -2,35 +2,42 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel
+} from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { useEffect } from "react"
 
 const vitalSignsSchema = z.object({
   chiefComplaint: z.string(),
-  significantSigns: z.string(),
+  significantSigns: z.string()
 })
 
 interface VitalSignsFormProps {
-  chiefComplaint?: string;
-  significantSigns?: string;
+  chiefComplaint?: string
+  significantSigns?: string
 }
 
-export function VitalSignsForm({ chiefComplaint = "", significantSigns="" }: VitalSignsFormProps) {
+export function VitalSignsForm({
+  chiefComplaint = "",
+  significantSigns = ""
+}: VitalSignsFormProps) {
   const form = useForm<z.infer<typeof vitalSignsSchema>>({
     resolver: zodResolver(vitalSignsSchema),
     defaultValues: {
       chiefComplaint: chiefComplaint,
-      significantSigns: significantSigns,
-    },
+      significantSigns: significantSigns
+    }
   })
 
   useEffect(() => {
-    form.reset({
-      chiefComplaint: chiefComplaint,
-      significantSigns: significantSigns,
-    });
-  }, [chiefComplaint, significantSigns, form]);
+    form.setValue("chiefComplaint", chiefComplaint)
+    form.setValue("significantSigns", significantSigns)
+  }, [chiefComplaint, significantSigns, form])
 
   function onSubmit(values: z.infer<typeof vitalSignsSchema>) {
     console.log(values)
@@ -47,7 +54,10 @@ export function VitalSignsForm({ chiefComplaint = "", significantSigns="" }: Vit
               <FormItem>
                 <FormLabel>Chief Complaint</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter the Chief Complaint" {...field} />
+                  <Textarea
+                    placeholder="Enter the Chief Complaint"
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -59,15 +69,19 @@ export function VitalSignsForm({ chiefComplaint = "", significantSigns="" }: Vit
               <FormItem>
                 <FormLabel>Significant Signs</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter the Significant Signs" {...field} />
+                  <Textarea
+                    placeholder="Enter the Significant Signs"
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
           />
         </div>
-        <Button type="submit" className="w-full">Save</Button>
+        <Button type="submit" className="w-full">
+          Save
+        </Button>
       </form>
     </Form>
   )
 }
-

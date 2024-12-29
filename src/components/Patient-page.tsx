@@ -8,19 +8,7 @@ import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
 
-export default function PatientPage({
-  token,
-  env
-}: {
-  token: string
-  env: string
-}) {
-  const iframeUrl = `${
-    env === "prod"
-      ? import.meta.env.VITE_IFRAME_URL
-      : import.meta.env.VITE_IFRAME_DEV_URL
-  }${token}`
-
+export default function PatientPage({ iframeUrl }: { iframeUrl: string }) {
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
     isMinimized: false
@@ -44,10 +32,6 @@ export default function PatientPage({
   const { message } = useContext(GlobalContext)
 
   useEffect(() => {
-    // Initialize variables
-    let chiefComplaint = ""
-    let significantSign = ""
-
     // Helper function to clean and sanitize string
     const sanitizeString = (str: string) => {
       return str
@@ -57,29 +41,41 @@ export default function PatientPage({
         .replace(/\s+/g, " ") // Replace multiple spaces with single space
     }
 
+    // Initialize variables
+    let chiefComplaint = ""
+    let significantSign = ""
+
     // Process each section
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     message?.summary?.forEach((section: any) => {
       const content = section.editedBody || section.body
 
+      // Append content based on section titles
       switch (section.title) {
         case "Chief Complaint":
         case "Chief Complaints":
         case "Chief Complaint & History Of Present Illness":
-          chiefComplaint = sanitizeString(content.join(" "))
+        case "Past Medical History":
+        case "Past Surgical History":
+        case "Treatment Plan or Medical Advices":
+        case "History of Presentation":
+          // Append content to chiefComplaint with a new line
+          chiefComplaint += `${sanitizeString(content.join(" "))}\n`
           break
+
         case "Significant Sign":
         case "Significant Signs":
         case "Significant Sign & Symptoms":
         case "Physical Examination (Significant Signs)":
-          significantSign = sanitizeString(content.join(" "))
+          // Append content to significantSign with a new line
+          significantSign += `${sanitizeString(content.join(" "))}\n`
           break
       }
     })
 
     // Set state
-    setChiefComplaint(chiefComplaint)
-    setSignificantSign(significantSign)
+    setChiefComplaint(chiefComplaint.trim())
+    setSignificantSign(significantSign.trim())
   }, [message])
 
   const handleReset = () => {

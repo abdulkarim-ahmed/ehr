@@ -53,18 +53,12 @@ export const IframeSidebar = ({
     >
       <div className={`h-full ${isMinimized ? "invisible" : "visible"}`}>
         <div className="h-16 border-b border-gray-200 flex items-center justify-between px-4">
-          <button
-            onClick={() => onMinimize(true)}
-            className="p-2 hover:bg-gray-100 rounded-full"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
           <span className="text-lg font-semibold">Consultation Assistant</span>
           <button
-            onClick={onClose}
+            onClick={() => onMinimize(true)}
             className="p-2 hover:bg-gray-100 rounded-full text-red-500"
           >
-            <X className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
