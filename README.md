@@ -33,14 +33,14 @@ Make sure you have the following installed:
 
 Before running the project, you need to set the access token in the code.
 
-1. Open the file `App.tsx`:
+1. Open the file `minimizable-iframe.tsx`:
    ```bash
-   src/App.tsx
+   src/components/minimizable-iframe.tsx
    ```
 
-2. Locate **line 5** and replace the placeholder with your access token:
+2. Locate **line 64** and replace the placeholder with your access token:
    ```typescript
-   const ACCESS_TOKEN = "your-access-token-here";
+   src="https://sahl.ai/iframe?access_token=your-access-token-here"
    ```
 
   

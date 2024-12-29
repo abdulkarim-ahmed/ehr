@@ -8,7 +8,7 @@ import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
 
-export default function PatientPage({ iframeUrl }: { iframeUrl: string }) {
+export default function PatientPage() {
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
     isMinimized: false
@@ -16,10 +16,6 @@ export default function PatientPage({ iframeUrl }: { iframeUrl: string }) {
 
   const handleOpen = () => {
     setSidebarState({ isOpen: true, isMinimized: false })
-  }
-
-  const handleClose = () => {
-    setSidebarState({ isOpen: false, isMinimized: false })
   }
 
   const handleMinimize = (minimized: boolean) => {
@@ -151,8 +147,6 @@ export default function PatientPage({ iframeUrl }: { iframeUrl: string }) {
         isOpen={sidebarState.isOpen}
         isMinimized={sidebarState.isMinimized}
         onMinimize={handleMinimize}
-        onClose={handleClose}
-        iframeUrl={iframeUrl}
       />
     </div>
   )

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from "react"
-import { X, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { useClickOutside } from "@/hooks/use-click-outside"
 import { GlobalContext } from "@/context/GlobalContextWithType"
 
@@ -7,15 +7,11 @@ import { GlobalContext } from "@/context/GlobalContextWithType"
 export const IframeSidebar = ({
   isOpen,
   isMinimized,
-  onMinimize,
-  onClose,
-  iframeUrl
+  onMinimize
 }: {
   isOpen: boolean
   isMinimized: boolean
   onMinimize: (state: boolean) => void
-  onClose: () => void
-  iframeUrl: string
 }) => {
   const sidebarRef = useRef(null)
 
@@ -65,7 +61,7 @@ export const IframeSidebar = ({
         {/* IFrame Container */}
         <div className="h-[calc(100%-4rem)]">
           <iframe
-            src={iframeUrl}
+            src="https://sahl.ai/iframe?access_token=your-access-token-here"
             className="w-full h-full border-0"
             title="Sahl.ai"
             id="childFrame"
