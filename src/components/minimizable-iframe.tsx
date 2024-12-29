@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from "react"
-import { X, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { useClickOutside } from "@/hooks/use-click-outside"
 import { GlobalContext } from "@/context/GlobalContextWithType"
 
@@ -8,7 +8,6 @@ export const IframeSidebar = ({
   isOpen,
   isMinimized,
   onMinimize,
-  onClose,
   iframeUrl
 }: {
   isOpen: boolean

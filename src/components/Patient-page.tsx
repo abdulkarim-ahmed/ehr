@@ -8,7 +8,19 @@ import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
 
-export default function PatientPage({ iframeUrl }: { iframeUrl: string }) {
+export default function PatientPage({
+  token,
+  env
+}: {
+  token: string
+  env: string
+}) {
+  const iframeUrl = `${
+    env === "prod"
+      ? import.meta.env.VITE_IFRAME_URL
+      : import.meta.env.VITE_IFRAME_DEV_URL
+  }${token}`
+
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
     isMinimized: false
