@@ -43,19 +43,19 @@ export const IframeSidebar = ({
     <div
       ref={sidebarRef}
       className={`
-        fixed top-0 right-0 h-full 
-        transform transition-transform duration-300
-        bg-white border-l border-gray-200
-        shadow-lg z-50
-        ${isMinimized ? "w-0" : `w-96`}
-      `}
+      fixed top-0 right-0 h-full 
+      transform transition-transform duration-300
+      bg-white border-l border-gray-200
+      shadow-lg z-50
+      ${isMinimized ? "w-0" : `w-96`}
+    `}
     >
-      <div className={`h-full ${isMinimized ? "invisible" : "visible"}`}>
-        <div className="h-16 border-b border-gray-200 flex items-center justify-between px-4">
-          <span className="text-lg font-semibold">Consultation Assistant</span>
+      <div className={`h-full ${isMinimized ? "invisible" : "visible"} `}>
+        <div className="my-6  flex items-center justify-between px-4">
+          <img src="/sahl-logo.png" alt="Sahl.ai" className="h-6" />
           <button
             onClick={() => onMinimize(true)}
-            className="p-2 hover:bg-gray-100 rounded-full text-red-500"
+            className=" hover:bg-gray-100 rounded-full text-red-500 justify-end items-end"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
