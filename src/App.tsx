@@ -7,10 +7,12 @@ import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group"
 
 export default function App() {
   const [password, setPassword] = useState("")
-  const [token, setToken] = useState("")
-  const [env, setEnv] = useState("dev")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isPasswordVerified, setIsPasswordVerified] = useState(false)
+
+  const [token, setToken] = useState("")
+  const [env, setEnv] = useState("dev")
+  const [theme, setTheme] = useState("")
 
   const actualPass = import.meta.env.VITE_PASSWORD
 
@@ -75,6 +77,13 @@ export default function App() {
                 placeholder="Enter bearer token"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
+                className="mb-2"
+              />
+              <Input
+                type="text"
+                placeholder="Enter Theme Name"
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
                 className="mb-4"
               />
               <div className="flex flex-col gap-2 mb-4">
@@ -100,6 +109,7 @@ export default function App() {
                   </div>
                 </RadioGroup>
               </div>
+
               <Button type="submit" className="w-full mb-4">
                 Submit
               </Button>
@@ -110,5 +120,5 @@ export default function App() {
     )
   }
 
-  return <PatientPage token={token} env={env} />
+  return <PatientPage token={token} env={env} theme={theme} />
 }
