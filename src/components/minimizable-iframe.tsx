@@ -45,14 +45,15 @@ export const IframeSidebar = ({
       ${isMinimized ? "w-0" : `w-96`}
     `}
     >
-      <button 
+      <button
         className={`
           absolute -left-6 top-3 
           p-1 rounded-full
           transition-colors duration-200
-          ${isMinimized 
-            ? "hover:bg-gray-100" 
-            : "bg-white hover:bg-gray-100 shadow-sm border border-gray-200 -left-10"
+          ${
+            isMinimized
+              ? "hover:bg-gray-100"
+              : "bg-white hover:bg-gray-100 shadow-sm border border-gray-200 -left-11"
           }
         `}
       >
