@@ -1,4 +1,5 @@
-import { useState, useContext, useEffect } from "react"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useContext, useEffect, useCallback } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
 import { GlobalContext } from "@/context/GlobalContextWithType"
@@ -7,6 +8,8 @@ import { PatientHeader } from "./patient-header"
 import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
+import HealthSummary from "./health-summary"
+import { sanitizeString } from "@/lib/utils"
 
 export default function PatientPage({
   token,
@@ -43,24 +46,21 @@ export default function PatientPage({
   const [chiefComplaint, setChiefComplaint] = useState("")
   const [significantSign, setSignificantSign] = useState("")
 
+  const [diagnoses, setDiagnoses] = useState(null)
+  const [medications, setMedications] = useState([])
+  const [orders, setOrders] = useState([])
+
   const { message } = useContext(GlobalContext)
 
-  useEffect(() => {
-    // Helper function to clean and sanitize string
-    const sanitizeString = (str: string) => {
-      return str
-        .replace(/^-\s*/gm, "") // Remove leading dashes and spaces
-        .replace(/\n/g, " ") // Replace newlines with spaces
-        .trim() // Remove leading/trailing whitespace
-        .replace(/\s+/g, " ") // Replace multiple spaces with single space
-    }
-
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  const handleSummary = useCallback((message: any) => {
     // Initialize variables
     let chiefComplaint = ""
     let significantSign = ""
 
     // Process each section
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/complexity/noForEach: <explanation>
     message?.summary?.forEach((section: any) => {
       const content = section.editedBody || section.body
 
@@ -87,10 +87,25 @@ export default function PatientPage({
       }
     })
 
-    // Set state
-    setChiefComplaint(chiefComplaint.trim())
-    setSignificantSign(significantSign.trim())
-  }, [message])
+    return {
+      chiefComplaint: chiefComplaint.trim(),
+      significantSign: significantSign.trim()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!message?.type) {
+      const { chiefComplaint, significantSign } = handleSummary(message)
+
+      // Set state
+      setChiefComplaint(chiefComplaint.trim())
+      setSignificantSign(significantSign.trim())
+    } else if (message.type === "icd-automation") {
+      setDiagnoses(message.data.diagnoses)
+      setMedications(message.data.medications)
+      setOrders(message.data.orders)
+    }
+  }, [message, handleSummary])
 
   const handleReset = () => {
     localStorage.clear()
@@ -155,6 +170,18 @@ export default function PatientPage({
                   chiefComplaint={chiefComplaint || ""}
                   significantSigns={significantSign || ""}
                 />
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="health-summary" className="mt-6">
+              <Card className="p-6">
+                {diagnoses && medications && orders && (
+                  <HealthSummary
+                    diagnoses={diagnoses}
+                    medications={medications}
+                    orders={orders}
+                  />
+                )}
               </Card>
             </TabsContent>
           </Tabs>

@@ -22,7 +22,7 @@ export const IframeSidebar = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log("Message received from iframe:", event)
+      console.log("Message received from iframe:", event.data)
       setMessage(event.data)
     }
 
@@ -42,10 +42,11 @@ export const IframeSidebar = ({
       transform transition-transform duration-300
       bg-white border-l border-gray-200
       shadow-lg z-50 
-      ${isMinimized ? "w-0" : `w-96`}
+      ${isMinimized ? "w-0" : "w-96"}
     `}
     >
       <button
+        type="button"
         className={`
           absolute -left-6 top-3 
           p-1 rounded-full
@@ -72,7 +73,7 @@ export const IframeSidebar = ({
           id="childFrame"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
           allow="microphone"
-        ></iframe>
+        />
       </div>
     </div>
   )
