@@ -99,7 +99,8 @@ const HealthSummary = ({
 
           exportUcafForm({
             diagnosesCodes,
-            orders: orders.splice(0, 3)
+            orders: orders.splice(0, 3),
+            medications: medications.splice(0, 3)
           })
         }}
       >

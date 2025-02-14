@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { Order } from "@/types/ICDAutomation"
+import type { Medication, Order } from "@/types/ICDAutomation"
 import { PDFDocument, type PDFPage, rgb } from "pdf-lib"
 
 // const pdfUrl = "public/UCAF2.0.pdf"
@@ -37,7 +37,7 @@ const pdfUrl = "/UCAF2.0.pdf"
 //     page.drawText(`${label} (${Math.round(x)}, ${Math.round(y)})`, {
 //       x,
 //       y,
-//       size: 1,
+//       size: 1.5,
 //       color: rgb(1, 0, 0)
 //     })
 //   }
@@ -53,10 +53,11 @@ type DiagnosesCodes = {
 type FormValues = {
   diagnosesCodes: DiagnosesCodes
   orders: Order[]
+  medications: Medication[]
 }
 
 export async function exportUcafForm(formValues: FormValues) {
-  const { diagnosesCodes, orders } = formValues
+  const { diagnosesCodes, orders, medications } = formValues
 
   // Fetch and load the existing PDF
   const existingPdfBytes = await fetch(pdfUrl).then((res) => res.arrayBuffer())
@@ -67,6 +68,7 @@ export async function exportUcafForm(formValues: FormValues) {
 
   drawDiagnosesCodes(page, diagnosesCodes)
   drawOrders(page, orders)
+  drawMedications(page, medications)
 
   const pdfBytes = await pdfDoc.save()
 
@@ -136,6 +138,34 @@ const drawOrders = (page: PDFPage, orders: Order[]) => {
       x: descXPosition,
       y: orderYPositions[idx],
       ...coordsConfig
+    })
+  })
+}
+
+const drawMedications = (page: PDFPage, medications: Medication[]) => {
+  const orderYPositions = [308, 292, 280]
+
+  const coordsConfig = {
+    size: 7,
+    color: rgb(0, 0, 0)
+  }
+
+  // biome-ignore lint/complexity/noForEach: <explanation>
+  medications.forEach((med, idx) => {
+    const codeXPosition = 83
+    const quantityXPosition = 440
+
+    page.drawText(med.name, {
+      ...coordsConfig,
+      x: codeXPosition,
+      y: orderYPositions[idx]
+    })
+
+    page.drawText(`${med.frequency} for ${med.duration} `, {
+      ...coordsConfig,
+      x: quantityXPosition,
+      y: orderYPositions[idx],
+      size: 6
     })
   })
 }
