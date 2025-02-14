@@ -4,44 +4,43 @@ import { PDFDocument, type PDFPage, rgb } from "pdf-lib"
 
 const pdfUrl = "public/UCAF2.0.pdf"
 
-const generateTestGrid = (
-  rows: number,
-  cols: number,
-  leftMost: number,
-  rightMost: number,
-  topMost: number,
-  bottomMost: number
-) => {
-  const points = []
-  const xStep = (rightMost - leftMost) / (cols - 1)
-  const yStep = (topMost - bottomMost) / (rows - 1)
+// const generateTestGrid = (
+//   rows: number,
+//   cols: number,
+//   leftMost: number,
+//   rightMost: number,
+//   topMost: number,
+//   bottomMost: number
+// ) => {
+//   const points = []
+//   const xStep = (rightMost - leftMost) / (cols - 1)
+//   const yStep = (topMost - bottomMost) / (rows - 1)
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      points.push({
-        label: `R${r + 1}-C${c + 1}`,
-        x: leftMost + c * xStep,
-        y: topMost - r * yStep
-      })
-    }
-  }
+//   for (let r = 0; r < rows; r++) {
+//     for (let c = 0; c < cols; c++) {
+//       points.push({
+//         label: `R${r + 1}-C${c + 1}`,
+//         x: leftMost + c * xStep,
+//         y: topMost - r * yStep
+//       })
+//     }
+//   }
 
-  return points
-}
+//   return points
+// }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const addTestPoints = (page: PDFPage) => {
-  const testPositions = generateTestGrid(55, 22, 80, 470, 710, 280)
-  for (const position of testPositions) {
-    const { label, x, y } = position
-    page.drawText(`${label} (${Math.round(x)}, ${Math.round(y)})`, {
-      x,
-      y,
-      size: 1,
-      color: rgb(1, 0, 0)
-    })
-  }
-}
+// const addTestPoints = (page: PDFPage) => {
+//   const testPositions = generateTestGrid(55, 22, 80, 470, 710, 280)
+//   for (const position of testPositions) {
+//     const { label, x, y } = position
+//     page.drawText(`${label} (${Math.round(x)}, ${Math.round(y)})`, {
+//       x,
+//       y,
+//       size: 1,
+//       color: rgb(1, 0, 0)
+//     })
+//   }
+// }
 
 type DiagnosesCodes = {
   principalCode: string
