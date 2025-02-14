@@ -28,6 +28,8 @@ const generateTestGrid = (
 
   return points
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const addTestPoints = (page: PDFPage) => {
   const testPositions = generateTestGrid(55, 22, 80, 470, 710, 280)
   for (const position of testPositions) {
