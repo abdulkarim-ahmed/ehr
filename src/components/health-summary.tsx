@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { Diagnoses, Medication, Order } from "@/types/ICDAutomation"
+import { Button } from "./ui/button"
+import { exportUcafForm } from "./generate-pdf"
 
 type HealthSummaryProps = {
   diagnoses: Diagnoses
@@ -84,6 +86,25 @@ const HealthSummary = ({
           ))}
         </CardContent>
       </Card>
+      <Button
+        type="submit"
+        className="w-full"
+        onClick={() => {
+          const diagnosesCodes = {
+            principalCode: diagnoses?.principal?.code,
+            secondCode: diagnoses?.additionalDiagnosis[0]?.code,
+            thirdCode: diagnoses?.additionalDiagnosis[1]?.code,
+            fourthCode: diagnoses?.additionalDiagnosis[2]?.code
+          }
+
+          exportUcafForm({
+            diagnosesCodes,
+            orders: orders.splice(0, 3)
+          })
+        }}
+      >
+        Export to UCAF 2.0
+      </Button>
     </div>
   )
 }
