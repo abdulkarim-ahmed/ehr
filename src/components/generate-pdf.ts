@@ -2,7 +2,8 @@
 import type { Order } from "@/types/ICDAutomation"
 import { PDFDocument, type PDFPage, rgb } from "pdf-lib"
 
-const pdfUrl = "public/UCAF2.0.pdf"
+// const pdfUrl = "public/UCAF2.0.pdf"
+const pdfUrl = "/UCAF2.0.pdf"
 
 // const generateTestGrid = (
 //   rows: number,
