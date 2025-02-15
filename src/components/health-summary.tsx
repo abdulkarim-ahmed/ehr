@@ -24,8 +24,8 @@ const HealthSummary = ({
           <div>
             <div className="text-sm text-gray-500">Principal Diagnosis:</div>
             <div className="flex items-center space-x-2">
-              <Badge variant="outline">{diagnoses.principal.code}</Badge>
-              <span>{diagnoses.principal.description}</span>
+              <Badge variant="outline">{diagnoses?.principal?.code}</Badge>
+              <span>{diagnoses?.principal?.description}</span>
             </div>
           </div>
 
