@@ -9,6 +9,7 @@ type HealthSummaryProps = {
   medications: Medication[]
   orders: Order[]
 }
+
 const HealthSummary = ({
   diagnoses,
   medications,
@@ -21,28 +22,32 @@ const HealthSummary = ({
           <CardTitle>Diagnosis</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <div className="text-sm text-gray-500">Principal Diagnosis:</div>
-            <div className="flex items-center space-x-2">
-              <Badge variant="outline">{diagnoses?.principal?.code}</Badge>
-              <span>{diagnoses?.principal?.description}</span>
+          {diagnoses.principal && (
+            <div>
+              <div className="text-sm text-gray-500">Principal Diagnosis:</div>
+              <div className="flex items-center space-x-2">
+                <Badge variant="outline">{diagnoses.principal.code}</Badge>
+                <span>{diagnoses.principal.description}</span>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div>
-            <div className="text-sm text-gray-500">Additional Diagnosis:</div>
-            <div className="space-y-2">
-              {diagnoses.additionalDiagnosis.map((diagnosis) => (
-                <div
-                  key={diagnosis.code}
-                  className="flex items-center space-x-2"
-                >
-                  <Badge variant="outline">{diagnosis.code}</Badge>
-                  <span>{diagnosis.description}</span>
-                </div>
-              ))}
+          {diagnoses.additionalDiagnosis.length > 0 && (
+            <div>
+              <div className="text-sm text-gray-500">Additional Diagnosis:</div>
+              <div className="space-y-2">
+                {diagnoses.additionalDiagnosis.map((diagnosis) => (
+                  <div
+                    key={diagnosis.code}
+                    className="flex items-center space-x-2"
+                  >
+                    <Badge variant="outline">{diagnosis.code}</Badge>
+                    <span>{diagnosis.description}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 

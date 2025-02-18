@@ -44,7 +44,7 @@ const pdfUrl = "/UCAF2.0.pdf"
 // }
 
 type DiagnosesCodes = {
-  principalCode: string
+  principalCode: string | undefined
   secondCode: string
   thirdCode: string
   fourthCode: string

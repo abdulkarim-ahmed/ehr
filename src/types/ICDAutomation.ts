@@ -4,7 +4,7 @@ export type Diagnosis = {
 }
 
 export type Diagnoses = {
-  principal: Diagnosis
+  principal: Diagnosis | undefined
   additionalDiagnosis: Diagnosis[]
 }
 

@@ -1,7 +1,6 @@
-import { useContext, useEffect, useRef } from "react"
+import { useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useClickOutside } from "@/hooks/use-click-outside"
-import { GlobalContext } from "@/context/GlobalContextWithType"
 
 export const IframeSidebar = ({
   isOpen,
@@ -16,21 +15,10 @@ export const IframeSidebar = ({
   iframeUrl: string
 }) => {
   const sidebarRef = useRef(null)
-  const { setMessage } = useContext(GlobalContext)
+
+  // isMinimized = false
 
   useClickOutside(sidebarRef, () => onMinimize(true), isOpen && !isMinimized)
-
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      console.log("Message received from iframe:", event.data)
-      setMessage(event.data)
-    }
-
-    window.addEventListener("message", handleMessage)
-    return () => {
-      window.removeEventListener("message", handleMessage)
-    }
-  }, [setMessage])
 
   if (!isOpen) return null
 
