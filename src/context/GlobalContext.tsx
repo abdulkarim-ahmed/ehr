@@ -2,16 +2,24 @@
 import { useState, ReactNode, useEffect } from "react"
 import { GlobalContext } from "./GlobalContextWithType"
 import { sanitizeString } from "@/lib/utils"
+import { SummaryData } from "@/types/ICDAutomation"
+//
 
-const handleSummary = (
-  message: any
-): {
-  chiefComplaint: string
-  significantSigns: string
-} => {
+const handleSummary = (message: any): SummaryData => {
   // Initialize variables
   let chiefComplaint = ""
   let significantSign = ""
+  let surgicalSpecimens = ""
+  let bloodLoss = ""
+  let transfusion = ""
+  let unitsUsed = ""
+  let preOperativeDiagnosis = ""
+  let postOperativeDiagnosis = ""
+  let admissionCategory = ""
+  let anesthesiaType = ""
+  let operativeTitle = ""
+  let surgicalProcedureAndFindings = ""
+  let complications = ""
 
   // Process each section
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -39,12 +47,56 @@ const handleSummary = (
         // Append content to significantSign with a new line
         significantSign += `${sanitizeString(content.join(" "))}\n`
         break
+      case "Surgical Specimens":
+        surgicalSpecimens += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Blood Loss":
+        bloodLoss += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Transfusion":
+        transfusion += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Units Used":
+        unitsUsed += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Pre-Operative Diagnosis":
+        preOperativeDiagnosis += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Post-Operative Diagnosis":
+        postOperativeDiagnosis += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Operative Title":
+        operativeTitle += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Surgical Procedure & Findings":
+        surgicalProcedureAndFindings += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Complications":
+        complications += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Admission Category":
+        admissionCategory += `${sanitizeString(content.join(" "))}\n`
+        break
+      case "Anesthesia Type":
+        anesthesiaType += `${sanitizeString(content.join(" "))}\n`
+        break
     }
   })
 
   return {
     chiefComplaint: chiefComplaint.trim(),
-    significantSigns: significantSign.trim()
+    significantSigns: significantSign.trim(),
+    surgicalSpecimens: surgicalSpecimens.trim(),
+    bloodLoss: bloodLoss.trim(),
+    transfusion: transfusion.trim(),
+    unitsUsed: unitsUsed.trim(),
+    preOperativeDiagnosis: preOperativeDiagnosis.trim(),
+    postOperativeDiagnosis: postOperativeDiagnosis.trim(),
+    operativeTitle: operativeTitle.trim(),
+    surgicalProcedureAndFindings: surgicalProcedureAndFindings.trim(),
+    complications: complications.trim(),
+    admissionCategory: admissionCategory.trim(),
+    anesthesiaType: anesthesiaType.trim()
   }
 }
 
@@ -53,9 +105,20 @@ export const GlobalContextProvider = ({
 }: {
   children: ReactNode
 }) => {
-  const [summaryData, setSummaryData] = useState({
+  const [summaryData, setSummaryData] = useState<SummaryData>({
     chiefComplaint: "",
-    significantSigns: ""
+    significantSigns: "",
+    admissionCategory: "",
+    anesthesiaType: "",
+    surgicalSpecimens: "",
+    bloodLoss: "",
+    transfusion: "",
+    unitsUsed: "",
+    preOperativeDiagnosis: "",
+    postOperativeDiagnosis: "",
+    operativeTitle: "",
+    surgicalProcedureAndFindings: "",
+    complications: ""
   })
   const [icdData, setIcdData] = useState({
     diagnoses: {
@@ -73,13 +136,10 @@ export const GlobalContextProvider = ({
     const handleMessage = (event: MessageEvent) => {
       // if no type this means data is of summary
       if (!event?.data?.type) {
-        const { chiefComplaint, significantSigns } = handleSummary(event.data)
+        const summary = handleSummary(event.data)
 
         // Set state
-        setSummaryData({
-          chiefComplaint,
-          significantSigns
-        })
+        setSummaryData(summary)
         // FIX: Add enum for this
       } else if (event.data.type === "icd-automation") {
         setIcdData({

@@ -9,6 +9,7 @@ import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
 import HealthSummary from "./health-summary"
+import ORForm from "./ORForm"
 
 export default function PatientPage({
   token,
@@ -77,6 +78,12 @@ export default function PatientPage({
                 Assessment
               </TabsTrigger>
               <TabsTrigger
+                value="or-form"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+              >
+                OR Form
+              </TabsTrigger>
+              <TabsTrigger
                 value="medical-file"
                 className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
               >
@@ -119,6 +126,11 @@ export default function PatientPage({
                     orders={icdData.orders}
                   />
                 )}
+              </Card>
+            </TabsContent>
+            <TabsContent value="or-form" className="mt-6">
+              <Card className="p-6">
+                <ORForm summaryData={summaryData} />
               </Card>
             </TabsContent>
           </Tabs>

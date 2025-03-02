@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Diagnoses, Medication, Order } from "@/types/ICDAutomation"
+import {
+  Diagnoses,
+  Medication,
+  Order,
+  SummaryData
+} from "@/types/ICDAutomation"
 import { createContext } from "react"
 
 interface GlobalContextProps {
-  summaryData: {
-    chiefComplaint?: string
-    significantSigns?: string
-  }
+  summaryData: SummaryData
   icdData: {
     diagnoses: Diagnoses
     medications: Medication[]
