@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useContext } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
@@ -26,6 +25,8 @@ export default function PatientPage({
       : import.meta.env.VITE_IFRAME_DEV_URL
   }${token}&theme=${theme}`
 
+  const { summaryData, icdData } = useContext(GlobalContext)
+
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
     isMinimized: false
@@ -43,12 +44,20 @@ export default function PatientPage({
     setSidebarState((prev) => ({ ...prev, isMinimized: minimized }))
   }
 
-  const { summaryData, icdData } = useContext(GlobalContext)
-
   const handleReset = () => {
     localStorage.clear()
     window.location.reload()
   }
+
+  const tabs = [
+    { value: "health-summary", label: "Health Summary" },
+    { value: "assessment", label: "Assessment" },
+    { value: "or-form", label: "OR Form" },
+    { value: "medical-file", label: "Medical File" },
+    { value: "vitals", label: "Vitals" },
+    { value: "laboratory", label: "Laboratory" },
+    { value: "diagnostic", label: "Diagnostic Result" }
+  ]
 
   return (
     <div className="container mx-auto p-4">
@@ -65,48 +74,15 @@ export default function PatientPage({
         <main className="flex-1">
           <Tabs defaultValue="assessment" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-              <TabsTrigger
-                value="health-summary"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Health Summary
-              </TabsTrigger>
-              <TabsTrigger
-                value="assessment"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Assessment
-              </TabsTrigger>
-              <TabsTrigger
-                value="or-form"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                OR Form
-              </TabsTrigger>
-              <TabsTrigger
-                value="medical-file"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Medical File
-              </TabsTrigger>
-              <TabsTrigger
-                value="vitals"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Vitals
-              </TabsTrigger>
-              <TabsTrigger
-                value="laboratory"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Laboratory
-              </TabsTrigger>
-              <TabsTrigger
-                value="diagnostic"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Diagnostic Result
-              </TabsTrigger>
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
             </TabsList>
             <TabsContent value="assessment" className="mt-6">
               <Card className="p-6">
