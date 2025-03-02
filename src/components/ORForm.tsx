@@ -118,12 +118,16 @@ const ORForm = ({ summaryData }: ORFormProps) => {
       setFormData((prevState) => ({
         ...prevState,
         ...hardcodedSampleData,
+        admissionCategory: summaryData.admissionCategory || "",
+        anesthesiaType: summaryData.anesthesiaType || "",
+        specimens: summaryData.surgicalSpecimens || "",
+        specimensDetails: summaryData.surgicalSpecimens || "",
+        bloodLoss: summaryData.bloodLoss || "",
+        transfusion: summaryData.transfusion || "",
         unitsUsed: summaryData.unitsUsed || "",
         mlUsed: summaryData.unitsUsed || "",
         preOperativeDiagnosis: summaryData.preOperativeDiagnosis || "",
         postOperativeDiagnosis: summaryData.postOperativeDiagnosis || "",
-        admissionCategory: summaryData.admissionCategory || "",
-        anesthesiaType: summaryData.anesthesiaType || "",
         operationTitle: summaryData.operativeTitle || "",
         surgicalProcedure: summaryData.surgicalProcedureAndFindings || "",
         complications: summaryData.complications || ""
@@ -382,8 +386,12 @@ const ORForm = ({ summaryData }: ORFormProps) => {
               className="w-full p-2 border border-gray-300 rounded"
             >
               <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
+              <option value="Yes" selected={!!formData.specimens}>
+                Yes
+              </option>
+              <option value="No" selected={!formData.specimens}>
+                No
+              </option>
             </select>
           </div>
           <div>
