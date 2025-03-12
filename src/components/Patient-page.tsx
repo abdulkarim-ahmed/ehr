@@ -11,17 +11,19 @@ import { IframeSidebar } from "./minimizable-iframe"
 export default function PatientPage({
   token,
   env,
-  theme
+  theme,
+  CTA
 }: {
   token: string
   env: string
   theme: string
+  CTA: string
 }) {
   const iframeUrl = `${
     env === "prod"
       ? import.meta.env.VITE_IFRAME_URL
       : import.meta.env.VITE_IFRAME_DEV_URL
-  }${token}&theme=${theme}`
+  }${token}&theme=${theme}&CTA=${CTA}`
 
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,

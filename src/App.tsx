@@ -13,6 +13,7 @@ export default function App() {
   const [token, setToken] = useState("")
   const [env, setEnv] = useState("dev")
   const [theme, setTheme] = useState("")
+  const [CTA, setCTA] = useState("")
 
   const actualPass = import.meta.env.VITE_PASSWORD
 
@@ -72,20 +73,29 @@ export default function App() {
         <Card className="w-96">
           <CardContent className="pt-6">
             <form onSubmit={handleTokenSubmit}>
-              <Input
-                type="text"
-                placeholder="Enter bearer token"
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                className="mb-2"
-              />
-              <Input
-                type="text"
-                placeholder="Enter Theme Name"
-                value={theme}
-                onChange={(e) => setTheme(e.target.value)}
-                className="mb-4"
-              />
+              <div>
+                <Input
+                  type="text"
+                  placeholder="Enter bearer token"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  className="mb-2"
+                />
+                <Input
+                  type="text"
+                  placeholder="Enter Theme Name"
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value)}
+                  className="mb-4"
+                />
+                <Input
+                  type="text"
+                  placeholder="Enter CTA text"
+                  value={CTA}
+                  onChange={(e) => setCTA(e.target.value)}
+                  className="mb-4"
+                />
+              </div>
               <div className="flex flex-col gap-2 mb-4">
                 <RadioGroup
                   defaultValue="dev"
@@ -120,5 +130,5 @@ export default function App() {
     )
   }
 
-  return <PatientPage token={token} env={env} theme={theme} />
+  return <PatientPage token={token} env={env} theme={theme} CTA={CTA} />
 }
