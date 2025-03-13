@@ -72,38 +72,48 @@ export default function App() {
       <div className="flex h-screen items-center justify-center">
         <Card className="w-96">
           <CardContent className="pt-6">
-            <form onSubmit={handleTokenSubmit}>
-              <div>
-                <Input
-                  type="text"
-                  placeholder="Enter bearer token"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  className="mb-2"
-                />
-                <Input
-                  type="text"
-                  placeholder="Enter Theme Name"
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
-                  className="mb-4"
-                />
-                <Input
-                  type="text"
-                  placeholder="Enter CTA text"
-                  value={CTA}
-                  onChange={(e) => setCTA(e.target.value)}
-                  className="mb-4"
-                />
+            <form onSubmit={handleTokenSubmit} className="space-y-4">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Mandatory Fields <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter Bearer Token"
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-medium text-gray-600">
+                    Optional Fields
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter Theme Name"
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Enter CTA Text"
+                    value={CTA}
+                    onChange={(e) => setCTA(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-2 mb-4">
+
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-gray-600">
+                  Select Environment
+                </label>
                 <RadioGroup
                   defaultValue="dev"
                   name="env"
-                  onValueChange={(e) => {
-                    localStorage.setItem("env", e)
-                    setEnv(e)
-                  }}
+                  onValueChange={setEnv}
                 >
                   <div className="flex items-center gap-2">
                     <RadioGroupItem id="dev" value="dev" />
@@ -120,7 +130,7 @@ export default function App() {
                 </RadioGroup>
               </div>
 
-              <Button type="submit" className="w-full mb-4">
+              <Button type="submit" className="w-full">
                 Submit
               </Button>
             </form>
