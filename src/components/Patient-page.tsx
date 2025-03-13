@@ -23,7 +23,7 @@ export default function PatientPage({
     env === "prod"
       ? import.meta.env.VITE_IFRAME_URL
       : import.meta.env.VITE_IFRAME_DEV_URL
-  }${token}&theme=${theme}&CTA=${CTA}`
+  }${token}&theme=${theme}&cta=${CTA}`
 
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
