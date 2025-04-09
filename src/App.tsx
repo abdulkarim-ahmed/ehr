@@ -19,8 +19,10 @@ export default function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem("bearerToken")
     const env = localStorage.getItem("env")
+    const theme = localStorage.getItem("theme")
 
     setEnv(env || "dev")
+    setTheme(theme || "")
     if (storedToken) {
       setToken(storedToken)
       setIsAuthenticated(true)
@@ -41,6 +43,7 @@ export default function App() {
       localStorage.setItem("bearerToken", token)
       setIsAuthenticated(true)
     }
+    localStorage.setItem("theme", theme)
   }
 
   if (!isPasswordVerified) {
