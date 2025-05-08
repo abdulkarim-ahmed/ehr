@@ -9,6 +9,7 @@ import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
 import HealthSummary from "./health-summary"
 import ORForm from "./ORForm"
+import { PatientHistory } from "./patient-history"
 
 export default function PatientPage({
   token,
@@ -53,7 +54,7 @@ export default function PatientPage({
     { value: "health-summary", label: "Health Summary" },
     { value: "assessment", label: "Assessment" },
     { value: "or-form", label: "OR Form" },
-    { value: "medical-file", label: "Medical File" },
+    { value: "history", label: "Medical History" },
     { value: "vitals", label: "Vitals" },
     { value: "laboratory", label: "Laboratory" },
     { value: "diagnostic", label: "Diagnostic Result" }
@@ -107,6 +108,11 @@ export default function PatientPage({
             <TabsContent value="or-form" className="mt-6">
               <Card className="p-6">
                 <ORForm summaryData={summaryData} />
+              </Card>
+            </TabsContent>
+            <TabsContent value="history" className="mt-6">
+              <Card className="p-6">
+                <PatientHistory />
               </Card>
             </TabsContent>
           </Tabs>

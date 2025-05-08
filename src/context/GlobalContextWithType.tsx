@@ -6,13 +6,14 @@ import {
 } from "@/types/ICDAutomation"
 import { createContext } from "react"
 
-interface GlobalContextProps {
+export interface GlobalContextProps {
   summaryData: SummaryData
   icdData: {
     diagnoses: Diagnoses
     medications: Medication[]
     orders: Order[]
   }
+  sendMessageToIframe?: (message: object, targetOrigin: string) => void
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({

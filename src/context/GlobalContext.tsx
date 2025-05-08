@@ -3,6 +3,7 @@ import { useState, ReactNode, useEffect } from "react"
 import { GlobalContext } from "./GlobalContextWithType"
 import { sanitizeString } from "@/lib/utils"
 import { SummaryData } from "@/types/ICDAutomation"
+import { initialConsultationsData } from "@/lib/constants"
 //
 
 const handleSummary = (message: any): SummaryData => {
@@ -132,6 +133,22 @@ export const GlobalContextProvider = ({
     orders: []
   })
 
+  const sendMessageToIframe = (message: any, targetOrigin: string = "*") => {
+    const IFRAME_ID = "childFrame"
+    try {
+      const iframe = document.getElementById(
+        IFRAME_ID
+      ) as HTMLIFrameElement | null
+      if (iframe?.contentWindow) {
+        iframe.contentWindow.postMessage(message, targetOrigin)
+      } else {
+        console.error("Iframe not found or contentWindow is null")
+      }
+    } catch (error) {
+      console.error("Error sending message to iframe:", error)
+    }
+  }
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // if no type this means data is of summary
@@ -147,6 +164,8 @@ export const GlobalContextProvider = ({
           medications: event.data.data.medications,
           orders: event.data.data.orders
         })
+      } else if (event.data.type === "get-patient-history") {
+        sendMessageToIframe(initialConsultationsData)
       }
     }
 
@@ -160,7 +179,8 @@ export const GlobalContextProvider = ({
     <GlobalContext.Provider
       value={{
         icdData,
-        summaryData
+        summaryData,
+        sendMessageToIframe
       }}
     >
       {children}
