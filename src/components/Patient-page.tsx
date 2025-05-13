@@ -12,18 +12,31 @@ export default function PatientPage({
   token,
   env,
   theme,
-  CTA
+  CTA,
+  patient,
+  onReset
 }: {
   token: string
   env: string
   theme: string
   CTA: string
+  onReset: () => void
+  patient: {
+    patient_id: string
+    patient_name: string
+    visit_id: string
+  }
 }) {
-  const iframeUrl = `${
+  const baseUrl =
     env === "prod"
       ? import.meta.env.VITE_IFRAME_URL
       : import.meta.env.VITE_IFRAME_DEV_URL
-  }${token}&theme=${theme}&cta=${CTA}`
+
+  let iframeUrl = `${baseUrl}${token}&theme=${theme}`
+
+  if (patient.patient_id) iframeUrl += `&patient_id=${patient.patient_id}`
+  if (patient.visit_id) iframeUrl += `&visit_id=${patient.visit_id}`
+  if (CTA) iframeUrl += `&cta=${CTA}`
 
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
@@ -45,7 +58,7 @@ export default function PatientPage({
   const [chiefComplaint, setChiefComplaint] = useState("")
   const [significantSign, setSignificantSign] = useState("")
 
-  const { message } = useContext(GlobalContext)
+  const { message, setMessage } = useContext(GlobalContext)
 
   useEffect(() => {
     // Helper function to clean and sanitize string
@@ -99,17 +112,38 @@ export default function PatientPage({
     window.location.reload()
   }
 
+  const handleGoBack = () => {
+    setMessage(null)
+    onReset()
+  }
+
   return (
     <div className="container mx-auto p-4">
-      <PatientHeader />
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleReset}
-        className="text-gray-400 hover:text-gray-600"
-      >
-        Reset
-      </Button>
+      <PatientHeader
+        patientName={patient.patient_name}
+        patientId={patient.patient_id}
+        visitId={patient.visit_id}
+      />
+      <div className="flex justify-between items-center ">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            handleGoBack()
+          }}
+          className="text-gray-400 hover:text-gray-600"
+        >
+          Go Back
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleReset}
+          className="text-gray-400 hover:text-gray-600"
+        >
+          Reset
+        </Button>
+      </div>
       <div className="flex gap-6 mt-6">
         <main className="flex-1">
           <Tabs defaultValue="assessment" className="w-full">
