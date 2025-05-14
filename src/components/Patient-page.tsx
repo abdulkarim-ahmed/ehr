@@ -7,6 +7,7 @@ import { PatientHeader } from "./patient-header"
 import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
+import { EnvMap } from "@/lib/utils"
 
 export default function PatientPage({
   token,
@@ -20,9 +21,7 @@ export default function PatientPage({
   CTA: string
 }) {
   const iframeUrl = `${
-    env === "prod"
-      ? import.meta.env.VITE_IFRAME_URL
-      : import.meta.env.VITE_IFRAME_DEV_URL
+    EnvMap[env as keyof typeof EnvMap]
   }${token}&theme=${theme}&cta=${CTA}`
 
   const [sidebarState, setSidebarState] = useState({
