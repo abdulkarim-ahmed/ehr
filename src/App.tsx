@@ -20,8 +20,10 @@ export default function App() {
   useEffect(() => {
     const storedToken = localStorage.getItem("bearerToken")
     const env = localStorage.getItem("env")
+    const theme = localStorage.getItem("theme")
 
     setEnv(env || "dev")
+    setTheme(theme || "")
     if (storedToken) {
       setToken(storedToken)
       setIsAuthenticated(true)
@@ -125,6 +127,12 @@ export default function App() {
                     <RadioGroupItem id="prod" value="prod" />
                     <label htmlFor="prod" className="text-sm">
                       Prod
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem id="altProd" value="altProd" />
+                    <label htmlFor="alt-prod" className="text-sm">
+                      Alt Prod
                     </label>
                   </div>
                 </RadioGroup>
