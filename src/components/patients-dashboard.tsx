@@ -34,7 +34,6 @@ export default function Dashboard({
                 <TableHead>Age</TableHead>
                 <TableHead>Gender</TableHead>
                 <TableHead>Last Visit</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -44,7 +43,7 @@ export default function Dashboard({
                   <TableCell className="font-medium">{patient.id}</TableCell>
                   <TableCell>
                     <Button
-                      className="text-emerald-600 hover:underline"
+                      className="text-pink-600 hover:underline"
                       variant={"link"}
                       onClick={() =>
                         onPatientClick({
@@ -60,12 +59,6 @@ export default function Dashboard({
                   <TableCell>{patient.dob}</TableCell>
                   <TableCell>{patient.gender}</TableCell>
                   <TableCell>{patient.visits[0].date}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      <span className="h-2 w-2 rounded-full bg-green-500 mr-2" />
-                      Active
-                    </div>
-                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant={"outline"}
