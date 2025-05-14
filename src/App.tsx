@@ -44,6 +44,7 @@ export default function App() {
       localStorage.setItem("bearerToken", token)
       setIsAuthenticated(true)
     }
+    localStorage.setItem("theme", theme)
   }
 
   if (!isPasswordVerified) {
