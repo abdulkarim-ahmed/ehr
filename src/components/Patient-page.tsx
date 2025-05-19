@@ -7,6 +7,10 @@ import { PatientHeader } from "./patient-header"
 import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
+import { EnvMap } from "@/lib/utils"
+import HealthSummary from "./health-summary"
+import ORForm from "./ORForm"
+import { PatientHistory } from "./patient-history"
 
 export default function PatientPage({
   token,
@@ -37,6 +41,8 @@ export default function PatientPage({
   if (patient.patient_id) iframeUrl += `&patient_id=${patient.patient_id}`
   if (patient.visit_id) iframeUrl += `&visit_id=${patient.visit_id}`
   if (CTA) iframeUrl += `&cta=${CTA}`
+
+  const { summaryData, icdData } = useContext(GlobalContext)
 
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
@@ -116,6 +122,15 @@ export default function PatientPage({
     setMessage(null)
     onReset()
   }
+  const tabs = [
+    { value: "health-summary", label: "Health Summary" },
+    { value: "assessment", label: "Assessment" },
+    { value: "or-form", label: "OR Form" },
+    { value: "history", label: "Medical History" },
+    { value: "vitals", label: "Vitals" },
+    { value: "laboratory", label: "Laboratory" },
+    { value: "diagnostic", label: "Diagnostic Result" }
+  ]
 
   return (
     <div className="container mx-auto p-4">
@@ -148,49 +163,44 @@ export default function PatientPage({
         <main className="flex-1">
           <Tabs defaultValue="assessment" className="w-full">
             <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-              <TabsTrigger
-                value="health-summary"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Health Summary
-              </TabsTrigger>
-              <TabsTrigger
-                value="assessment"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Assessment
-              </TabsTrigger>
-              <TabsTrigger
-                value="medical-file"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Medical File
-              </TabsTrigger>
-              <TabsTrigger
-                value="vitals"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Vitals
-              </TabsTrigger>
-              <TabsTrigger
-                value="laboratory"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Laboratory
-              </TabsTrigger>
-              <TabsTrigger
-                value="diagnostic"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                Diagnostic Result
-              </TabsTrigger>
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
             </TabsList>
             <TabsContent value="assessment" className="mt-6">
               <Card className="p-6">
                 <VitalSignsForm
-                  chiefComplaint={chiefComplaint || ""}
-                  significantSigns={significantSign || ""}
+                  chiefComplaint={summaryData.chiefComplaint || ""}
+                  significantSigns={summaryData.significantSigns || ""}
                 />
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="health-summary" className="mt-6">
+              <Card className="p-6">
+                {icdData.diagnoses && icdData.medications && icdData.orders && (
+                  <HealthSummary
+                    diagnoses={icdData.diagnoses}
+                    medications={icdData.medications}
+                    orders={icdData.orders}
+                  />
+                )}
+              </Card>
+            </TabsContent>
+            <TabsContent value="or-form" className="mt-6">
+              <Card className="p-6">
+                <ORForm summaryData={summaryData} />
+              </Card>
+            </TabsContent>
+            <TabsContent value="history" className="mt-6">
+              <Card className="p-6">
+                <PatientHistory />
               </Card>
             </TabsContent>
           </Tabs>

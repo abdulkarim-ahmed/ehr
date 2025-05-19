@@ -1,12 +1,35 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext } from "react";
+import {
+  Diagnoses,
+  Medication,
+  Order,
+  SummaryData
+} from "@/types/ICDAutomation"
+import { createContext } from "react"
 
-interface GlobalContextProps {
-  message: any;
-  setMessage: (message: any) => void;
+export interface GlobalContextProps {
+  summaryData: SummaryData
+  icdData: {
+    diagnoses: Diagnoses
+    medications: Medication[]
+    orders: Order[]
+  }
+  sendMessageToIframe?: (message: object, targetOrigin: string) => void
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
-  message: null,
-  setMessage: () => {},
-});
+  summaryData: {
+    chiefComplaint: "",
+    significantSigns: ""
+  },
+  icdData: {
+    diagnoses: {
+      principal: {
+        code: "",
+        description: ""
+      },
+      additionalDiagnosis: []
+    },
+    medications: [],
+    orders: []
+  }
+})
