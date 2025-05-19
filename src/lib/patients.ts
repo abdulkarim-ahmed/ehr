@@ -232,5 +232,50 @@ export const patients = [
           "Annual physical examination. All vitals within normal limits. Routine labs ordered. Encouraged regular exercise."
       }
     ]
+  },
+  {
+    id: "",
+    name: "Anon",
+    dob: "1974-05-17",
+    gender: "Male",
+    phone: "(555) 234-5678",
+    email: "david.kim@example.com",
+    address: "567 Maple Ave, Someplace, WA 98001",
+    insurance: "Aetna",
+    policyNumber: "AET-456123789",
+    status: "Inactive",
+    statusColor: "gray",
+    allergies: ["Latex", "Ibuprofen"],
+    conditions: ["Osteoarthritis", "Gastroesophageal Reflux Disease"],
+    medications: ["Omeprazole 20mg", "Acetaminophen 500mg as needed"],
+    visits: [
+      {
+        id: "",
+        date: "Apr 28, 2025",
+        type: "Follow-up",
+        provider: "Dr. Susan Taylor",
+        department: "Orthopedics",
+        notes:
+          "Patient reports continued knee pain. Discussed treatment options including physical therapy and possible knee injection."
+      },
+      {
+        id: "",
+        date: "Oct 15, 2024",
+        type: "Procedure",
+        provider: "Dr. James Anderson",
+        department: "Gastroenterology",
+        notes:
+          "Underwent upper endoscopy. Findings consistent with GERD. Biopsy negative for H. pylori. Continue PPI therapy."
+      },
+      {
+        id: "",
+        date: "Jul 3, 2024",
+        type: "Check-up",
+        provider: "Dr. Maria Garcia",
+        department: "Primary Care",
+        notes:
+          "Annual physical examination. All vitals within normal limits. Routine labs ordered. Encouraged regular exercise."
+      }
+    ]
   }
 ]
