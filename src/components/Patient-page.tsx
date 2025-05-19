@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
 import { GlobalContext } from "@/context/GlobalContextWithType"
@@ -7,7 +7,7 @@ import { PatientHeader } from "./patient-header"
 import { VitalSignsForm } from "./vital-signs-form"
 import { Button } from "./ui/button"
 import { IframeSidebar } from "./minimizable-iframe"
-import { EnvMap } from "@/lib/utils"
+// import { EnvMap } from "@/lib/utils"
 import HealthSummary from "./health-summary"
 import ORForm from "./ORForm"
 import { PatientHistory } from "./patient-history"
@@ -61,57 +61,57 @@ export default function PatientPage({
     setSidebarState((prev) => ({ ...prev, isMinimized: minimized }))
   }
 
-  const [chiefComplaint, setChiefComplaint] = useState("")
-  const [significantSign, setSignificantSign] = useState("")
+  // const [chiefComplaint, setChiefComplaint] = useState("")
+  // const [significantSign, setSignificantSign] = useState("")
 
-  const { message, setMessage } = useContext(GlobalContext)
+  // const { message, setMessage } = useContext(GlobalContext)
 
-  useEffect(() => {
-    // Helper function to clean and sanitize string
-    const sanitizeString = (str: string) => {
-      return str
-        .replace(/^-\s*/gm, "") // Remove leading dashes and spaces
-        .replace(/\n/g, " ") // Replace newlines with spaces
-        .trim() // Remove leading/trailing whitespace
-        .replace(/\s+/g, " ") // Replace multiple spaces with single space
-    }
+  // useEffect(() => {
+  //   // Helper function to clean and sanitize string
+  //   const sanitizeString = (str: string) => {
+  //     return str
+  //       .replace(/^-\s*/gm, "") // Remove leading dashes and spaces
+  //       .replace(/\n/g, " ") // Replace newlines with spaces
+  //       .trim() // Remove leading/trailing whitespace
+  //       .replace(/\s+/g, " ") // Replace multiple spaces with single space
+  //   }
 
-    // Initialize variables
-    let chiefComplaint = ""
-    let significantSign = ""
+  //   // Initialize variables
+  //   let chiefComplaint = ""
+  //   let significantSign = ""
 
-    // Process each section
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    message?.summary?.forEach((section: any) => {
-      const content = section.editedBody || section.body
+  //   // Process each section
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   message?.summary?.forEach((section: any) => {
+  //     const content = section.editedBody || section.body
 
-      // Append content based on section titles
-      switch (section.title) {
-        case "Chief Complaint":
-        case "Chief Complaints":
-        case "Chief Complaint & History Of Present Illness":
-        case "Past Medical History":
-        case "Past Surgical History":
-        case "Treatment Plan or Medical Advices":
-        case "History of Presentation":
-          // Append content to chiefComplaint with a new line
-          chiefComplaint += `${sanitizeString(content.join(" "))}\n`
-          break
+  //     // Append content based on section titles
+  //     switch (section.title) {
+  //       case "Chief Complaint":
+  //       case "Chief Complaints":
+  //       case "Chief Complaint & History Of Present Illness":
+  //       case "Past Medical History":
+  //       case "Past Surgical History":
+  //       case "Treatment Plan or Medical Advices":
+  //       case "History of Presentation":
+  //         // Append content to chiefComplaint with a new line
+  //         chiefComplaint += `${sanitizeString(content.join(" "))}\n`
+  //         break
 
-        case "Significant Sign":
-        case "Significant Signs":
-        case "Significant Sign & Symptoms":
-        case "Physical Examination (Significant Signs)":
-          // Append content to significantSign with a new line
-          significantSign += `${sanitizeString(content.join(" "))}\n`
-          break
-      }
-    })
+  //       case "Significant Sign":
+  //       case "Significant Signs":
+  //       case "Significant Sign & Symptoms":
+  //       case "Physical Examination (Significant Signs)":
+  //         // Append content to significantSign with a new line
+  //         significantSign += `${sanitizeString(content.join(" "))}\n`
+  //         break
+  //     }
+  //   })
 
-    // Set state
-    setChiefComplaint(chiefComplaint.trim())
-    setSignificantSign(significantSign.trim())
-  }, [message])
+  //   // Set state
+  //   setChiefComplaint(chiefComplaint.trim())
+  //   setSignificantSign(significantSign.trim())
+  // }, [message])
 
   const handleReset = () => {
     localStorage.clear()
@@ -119,7 +119,7 @@ export default function PatientPage({
   }
 
   const handleGoBack = () => {
-    setMessage(null)
+    // setMessage(null)
     onReset()
   }
   const tabs = [
