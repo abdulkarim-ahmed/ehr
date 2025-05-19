@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import PatientPage from "./components/Patient-page"
 import { RadioGroup, RadioGroupItem } from "./components/ui/radio-group"
+import Dashboard from "./components/patients-dashboard"
 
 export default function App() {
   const [password, setPassword] = useState("")
@@ -14,6 +15,12 @@ export default function App() {
   const [env, setEnv] = useState("dev")
   const [theme, setTheme] = useState("")
   const [CTA, setCTA] = useState("")
+
+  const [patient, setPatient] = useState<{
+    patient_id: string
+    patient_name: string
+    visit_id: string
+  } | null>(null)
 
   const actualPass = import.meta.env.VITE_PASSWORD
 
@@ -149,5 +156,26 @@ export default function App() {
     )
   }
 
-  return <PatientPage token={token} env={env} theme={theme} CTA={CTA} />
+  return patient ? (
+    <PatientPage
+      token={token}
+      env={env}
+      theme={theme}
+      CTA={CTA}
+      patient={patient}
+      onReset={() => {
+        setPatient(null)
+      }}
+    />
+  ) : (
+    <Dashboard
+      onPatientClick={(patient: {
+        patient_id: string
+        patient_name: string
+        visit_id: string
+      }) => {
+        setPatient(patient)
+      }}
+    />
+  )
 }
