@@ -175,12 +175,31 @@ export const GlobalContextProvider = ({
     }
   }, [])
 
+  const resetSummaryData = () => {
+    setSummaryData({
+      chiefComplaint: "",
+      significantSigns: "",
+      admissionCategory: "",
+      anesthesiaType: "",
+      surgicalSpecimens: "",
+      bloodLoss: "",
+      transfusion: "",
+      unitsUsed: "",
+      preOperativeDiagnosis: "",
+      postOperativeDiagnosis: "",
+      operativeTitle: "",
+      surgicalProcedureAndFindings: "",
+      complications: ""
+    })
+  }
+
   return (
     <GlobalContext.Provider
       value={{
         icdData,
         summaryData,
-        sendMessageToIframe
+        sendMessageToIframe,
+        resetSummaryData
       }}
     >
       {children}

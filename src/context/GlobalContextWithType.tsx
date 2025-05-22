@@ -13,6 +13,7 @@ export interface GlobalContextProps {
     medications: Medication[]
     orders: Order[]
   }
+  resetSummaryData?: () => void
   sendMessageToIframe?: (message: object, targetOrigin: string) => void
 }
 

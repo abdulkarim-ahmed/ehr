@@ -42,7 +42,7 @@ export default function PatientPage({
   if (patient.visit_id) iframeUrl += `&visit_id=${patient.visit_id}`
   if (CTA) iframeUrl += `&cta=${CTA}`
 
-  const { summaryData, icdData } = useContext(GlobalContext)
+  const { summaryData, icdData, resetSummaryData } = useContext(GlobalContext)
 
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
@@ -114,12 +114,13 @@ export default function PatientPage({
   // }, [message])
 
   const handleReset = () => {
+    resetSummaryData?.()
     localStorage.clear()
     window.location.reload()
   }
 
   const handleGoBack = () => {
-    // setMessage(null)
+    resetSummaryData?.()
     onReset()
   }
   const tabs = [
