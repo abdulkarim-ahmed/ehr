@@ -1,5 +1,4 @@
-// src/context/ThemeContext.tsx
-import React, {
+import {
   createContext,
   useState,
   useEffect,
@@ -8,6 +7,7 @@ import React, {
 } from "react"
 
 export type Theme = "theme-blue" | "theme-pink" | "theme-sleek-dark"
+
 export const THEME_OPTIONS: { value: Theme; label: string }[] = [
   { value: "theme-blue", label: "Cool Blue" },
   { value: "theme-pink", label: "Soft Pink" },
