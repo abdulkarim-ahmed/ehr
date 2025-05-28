@@ -1,5 +1,5 @@
 // components/patient-header.tsx
-import { UserCircle, FileText, CalendarDays } from "lucide-react"
+import { UserCircle, FileText } from "lucide-react"
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Uncomment if you have Avatar
 
 interface PatientHeaderProps {
