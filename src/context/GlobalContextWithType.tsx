@@ -24,10 +24,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
   },
   icdData: {
     diagnoses: {
-      principal: {
-        code: "",
-        description: ""
-      },
+      principal: undefined,
       additionalDiagnosis: []
     },
     medications: [],

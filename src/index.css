@@ -1,46 +1,186 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
- 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
- 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
- 
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
- 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
- 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
- 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
- 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    /* Base Variables (Also serves as Cool Blue Theme defaults) */
+    --background: 220 20% 97%;      /* Light cool gray-blue */
+    --foreground: 224 71.4% 4.1%;    /* Dark Slate Blue for text */
+    --muted: 220 14.3% 95.9%;     /* Lighter gray for muted backgrounds */
+    --muted-foreground: 220 8.9% 46.1%; /* Gray for muted text */
+    --popover: 0 0% 100%;            /* White */
+    --popover-foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;               /* White */
+    --card-foreground: 224 71.4% 4.1%;
+    --border: 220 13% 88%;          /* Softer border color */
+    --input: 220 13% 91%;           /* Input field background/border */
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 0%;
- 
-    --radius: 0.5rem;
+    --primary: 205 85% 45%;          /* Main Vibrant Blue */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+
+    --secondary: 210 40% 96%;       /* Very Light Cool Gray-Blue (for subtle backgrounds, secondary button outlines) */
+    --secondary-foreground: 210 30% 40%; /* Muted Cool Blue (text on light gray-blue secondary) */
+
+    --accent: 200 90% 60%;           /* Slightly Lighter/Brighter Blue (for specific highlights, active states) */
+    --accent-foreground: 0 0% 100%;  /* White text on accent */
+
+    --destructive: 0 75% 55%;        /* A clear red */
+    --destructive-foreground: 0 0% 100%;
+    --ring: 205 85% 50%;            /* Focus ring, similar to primary */
+    --radius: 0.65rem;               /* Slightly less rounded for a bit more sharpness */
+
+    /* Spacing & Font Variables - Default (Cool Blue) */
+    --font-size-base: 1rem; /* 16px */
+    --font-size-sm: 0.875rem; /* 14px */
+    --font-size-lg: 1.125rem; /* 18px */
+    --font-heading-1: 2.25rem; /* 36px */
+    --font-heading-2: 1.875rem; /* 30px */
+    --font-heading-3: 1.5rem; /* 24px */
+
+    --line-height-base: 1.6;
+    --line-height-heading: 1.3;
+
+    --spacing-unit: 4px; /* Base unit for consistent scaling */
+    --spacing-xs: calc(1 * var(--spacing-unit));  /* 4px */
+    --spacing-sm: calc(2 * var(--spacing-unit));  /* 8px */
+    --spacing-md: calc(4 * var(--spacing-unit));  /* 16px */
+    --spacing-lg: calc(6 * var(--spacing-unit));  /* 24px */
+    --spacing-xl: calc(8 * var(--spacing-unit));  /* 32px */
+
+    --card-padding: var(--spacing-lg); /* Default card padding */
+    --content-padding: var(--spacing-xl); /* Default page content padding */
+  }
+
+  .theme-blue {
+    /* Inherits from :root, overrides if needed for blue specifically */
+    --radius: 0.65rem;
+  }
+
+  .theme-pink {
+    --background: 0 0% 100%;         /* White */
+    --foreground: 220 10% 25%;      /* Dark Cool Gray/Charcoal for text */
+    --muted: 220 20% 97%;        /* Very Light Cool Gray (subtle off-white) */
+    --muted-foreground: 220 10% 50%; /* Medium Gray for muted text */
+    --popover: 0 0% 100%;           /* White */
+    --popover-foreground: 220 10% 25%;
+    --card: 0 0% 100%;              /* White cards */
+    --card-foreground: 220 10% 25%;
+    --border: 220 15% 92%;         /* Light Gray Border, slightly softer */
+    --input: 0 0% 98%;              /* Almost white input with subtle border */
+
+    --primary: 330 80% 55%;         /* Vibrant Magenta/Pink (like reference image) */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 330 80% 96%;      /* Very Light Pink (for subtle hovers/backgrounds) */
+    --secondary-foreground: 330 70% 45%; /* Darker Pink (text on very light pink) */
+
+    --accent: 330 85% 65%;          /* Slightly lighter/brighter version of primary pink */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 80% 60%;         /* Standard Red, perhaps a touch more vibrant */
+    --destructive-foreground: 0 0% 100%;
+    --ring: 330 80% 60%;
+    --radius: 0.75rem;              /* Slightly more rounded for a softer feel */
+
+    /* Pink Theme Spacing & Font Adjustments (example: slightly more airy) */
+    --font-size-base: 1.025rem;
+    --line-height-base: 1.65;
+    --card-padding: calc(7 * var(--spacing-unit)); /* 28px */
+    --content-padding: calc(9 * var(--spacing-unit)); /* 36px */
+  }
+
+  .theme-sleek-dark {
+    --background: 225 15% 10%;      /* Very Dark cool gray */
+    --foreground: 210 25% 94%;      /* Light gray for text */
+    --muted: 225 12% 16%;        /* Slightly lighter dark gray */
+    --muted-foreground: 210 20% 70%;
+    --popover: 225 10% 13%;
+    --popover-foreground: 210 25% 94%;
+    --card: 225 10% 13%;         /* Dark card background */
+    --card-foreground: 210 25% 94%;
+    --border: 225 10% 22%;        /* Subtle border */
+    --input: 225 10% 20%;         /* Darker input */
+
+    --primary: 190 85% 50%;         /* A vibrant Teal or Cyan */
+    --primary-foreground: 225 20% 8%; /* Dark text on primary for contrast */
+
+    --secondary: 210 75% 55%;      /* A muted blue as secondary */
+    --secondary-foreground: 210 20% 96%;
+
+    --accent: 260 75% 65%;         /* A vibrant purple for accent */
+    --accent-foreground: 210 20% 96%;
+
+    --destructive: 0 70% 55%;        /* A clear, but not overly bright, red */
+    --destructive-foreground: 0 0% 96%;
+    --ring: 190 85% 55%;
+    --radius: 0.5rem;               /* Sharper corners for "sleek" */
+
+    /* Sleek Dark Theme Spacing & Font Adjustments (example: slightly more compact) */
+    --font-size-base: 0.975rem;
+    --line-height-base: 1.55;
+    --card-padding: calc(5 * var(--spacing-unit)); /* 20px */
+    --content-padding: var(--spacing-lg); /* 24px */
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
   }
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: var(--font-size-base); /* Apply base font size */
+    line-height: var(--line-height-base); /* Apply base line height */
   }
+
+  /* Apply heading font sizes using variables (optional, can be done with utilities too) */
+  h1 { font-size: var(--font-heading-1); line-height: var(--line-height-heading); @apply font-bold; }
+  h2 { font-size: var(--font-heading-2); line-height: var(--line-height-heading); @apply font-semibold; }
+  h3 { font-size: var(--font-heading-3); line-height: var(--line-height-heading); @apply font-semibold; }
+  /* Add h4, h5, h6 if needed */
+
+  /* Example utility for using card padding variable if needed directly */
+  .content-p {
+    padding: var(--content-padding);
+  }
+  .card-p {
+    padding: var(--card-padding);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleUp {
+    from { transform: scale(0.95); opacity: 0.8; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* Animation Utilities */
+  .animate-fadeIn {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  .animate-scaleUp {
+    animation: scaleUp 0.3s ease-out forwards;
+  }
+  /* For staggered list item animations */
+  .list-item-appear {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: hsl(var(--muted) / 0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / 0.4); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.6); }

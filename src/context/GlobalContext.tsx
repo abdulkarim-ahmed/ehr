@@ -3,7 +3,7 @@ import { useState, ReactNode, useEffect } from "react"
 import { GlobalContext } from "./GlobalContextWithType"
 import { sanitizeString } from "@/lib/utils"
 import { SummaryData } from "@/types/ICDAutomation"
-import { initialConsultationsData } from "@/lib/constants"
+import { initialConsultationsData } from "@/lib/mock-data"
 //
 
 const handleSummary = (message: any): SummaryData => {

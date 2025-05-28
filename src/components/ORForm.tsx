@@ -1,5 +1,33 @@
 import React, { useEffect, useState } from "react"
 import { SummaryData } from "@/types/ICDAutomation"
+// Import Shadcn UI components
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from "@/components/ui/card"
+import {
+  FileText,
+  Save,
+  Printer,
+  User,
+  Hospital,
+  CalendarClockIcon
+} from "lucide-react" // Icons
 
 type ORFormProps = {
   summaryData: SummaryData
@@ -67,6 +95,48 @@ const hardcodedSampleData: Partial<FormData> = {
     hour12: false
   })
 }
+
+const FormSection: React.FC<{
+  title: string
+  children: React.ReactNode
+  icon?: React.ReactNode
+  description?: string
+}> = ({ title, children, icon, description }) => (
+  <div className="mb-[var(--spacing-lg)] rounded-lg border border-border p-[var(--spacing-md)] bg-card shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex items-center mb-[var(--spacing-sm)] border-b border-border pb-[var(--spacing-sm)]">
+      {icon && <span className="mr-2 text-primary">{icon}</span>}
+      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+    </div>
+    {description && (
+      <p className="text-sm text-muted-foreground mb-[var(--spacing-md)]">
+        {description}
+      </p>
+    )}
+    <div className="space-y-[var(--spacing-md)]">{children}</div>
+  </div>
+)
+
+// Helper for input groups
+const FormGroup: React.FC<{
+  label: string
+  htmlFor: string
+  children: React.ReactNode
+  className?: string
+  description?: string
+}> = ({ label, htmlFor, children, className, description }) => (
+  <div className={className}>
+    <Label
+      htmlFor={htmlFor}
+      className="block text-sm font-medium text-foreground/90 mb-1.5"
+    >
+      {label}
+    </Label>
+    {children}
+    {description && (
+      <p className="text-xs text-muted-foreground mt-1">{description}</p>
+    )}
+  </div>
+)
 
 const ORForm = ({ summaryData }: ORFormProps) => {
   const [formData, setFormData] = useState<FormData>({
@@ -136,468 +206,448 @@ const ORForm = ({ summaryData }: ORFormProps) => {
   }, [summaryData])
 
   const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value
-    }))
+    setFormData((prevState) => ({ ...prevState, [name]: value }))
+  }
+
+  const handleSelectChange = (name: keyof FormData) => (value: string) => {
+    setFormData((prevState) => ({ ...prevState, [name]: value }))
+  }
+
+  const handleRadioChange = (name: keyof FormData) => (value: string) => {
+    setFormData((prevState) => ({ ...prevState, [name]: value }))
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log("OR Form Submitted:", formData)
+    // Add actual submission logic here
+    alert("Operation Report saved (see console for data).")
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div
-        id="operation-report"
-        className="bg-white p-6 border border-gray-300 rounded-lg"
-      >
-        <div className="flex justify-between items-center mb-5 border-b border-gray-800 pb-2">
-          <div className="text-xl font-bold">DH MD 099</div>
-        </div>
-
-        <div className="text-center font-bold text-xl mb-6">
-          Operation Report
-        </div>
-
-        {/* Patient Information */}
-        <div className="mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-            <div>
-              <label className="block font-bold mb-1">Patient's Name:</label>
-              <input
-                type="text"
-                name="patientName"
-                value={formData.patientName}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block font-bold mb-1">MR#:</label>
-              <input
-                type="text"
-                name="mrNumber"
-                value={formData.mrNumber}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block font-bold mb-1">Gender:</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block font-bold mb-1">Age:</label>
-              <input
-                type="text"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
+    <Card className="shadow-lg border animate-fadeIn">
+      <CardHeader className="border-b">
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle className="flex items-center text-xl">
+              <FileText className="mr-3 h-6 w-6 text-primary" /> Operation
+              Report
+            </CardTitle>
+            <CardDescription>
+              Official surgical operation documentation.
+            </CardDescription>
           </div>
-          <div className="mb-2">
-            <label className="block font-bold mb-1">Nationality:</label>
-            <input
-              type="text"
-              name="nationality"
-              value={formData.nationality}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
+          <div className="text-sm font-mono text-muted-foreground">
+            DH MD 099
           </div>
         </div>
+      </CardHeader>
+      <CardContent className="p-[var(--card-padding)]">
+        <form onSubmit={handleSubmit} className="space-y-[var(--spacing-xl)]">
+          <FormSection title="Patient Information" icon={<User size={20} />}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[var(--spacing-md)]">
+              <FormGroup label="Patient's Name:" htmlFor="patientName">
+                <Input
+                  id="patientName"
+                  name="patientName"
+                  value={formData.patientName}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="MR#:" htmlFor="mrNumber">
+                <Input
+                  id="mrNumber"
+                  name="mrNumber"
+                  value={formData.mrNumber}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="Gender:" htmlFor="gender">
+                <Select
+                  name="gender"
+                  value={formData.gender}
+                  onValueChange={handleSelectChange("gender")}
+                >
+                  <SelectTrigger id="gender">
+                    <SelectValue placeholder="Select gender..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormGroup>
+              <FormGroup label="Age:" htmlFor="age">
+                <Input
+                  id="age"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+            </div>
+            <FormGroup label="Nationality:" htmlFor="nationality">
+              <Input
+                id="nationality"
+                name="nationality"
+                value={formData.nationality}
+                onChange={handleChange}
+              />
+            </FormGroup>
+          </FormSection>
 
-        {/* Department and Location */}
-        <div className="mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
-            <div>
-              <label className="block font-bold mb-1">Department:</label>
-              <input
-                type="text"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
+          <FormSection title="Location & Timing" icon={<Hospital size={20} />}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--spacing-md)]">
+              <FormGroup label="Department:" htmlFor="department">
+                <Input
+                  id="department"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="Ward:" htmlFor="ward">
+                <Input
+                  id="ward"
+                  name="ward"
+                  value={formData.ward}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="Room:" htmlFor="room">
+                <Input
+                  id="room"
+                  name="room"
+                  value={formData.room}
+                  onChange={handleChange}
+                />
+              </FormGroup>
             </div>
-            <div>
-              <label className="block font-bold mb-1">Ward:</label>
-              <input
-                type="text"
-                name="ward"
-                value={formData.ward}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--spacing-md)]">
+              <FormGroup label="Date of Procedure:" htmlFor="date">
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="Procedure Time (24h):" htmlFor="procedureTime">
+                <Input
+                  id="procedureTime"
+                  name="procedureTime"
+                  type="time"
+                  value={formData.procedureTime}
+                  onChange={handleChange}
+                />
+              </FormGroup>
             </div>
-            <div>
-              <label className="block font-bold mb-1">Room:</label>
-              <input
-                type="text"
-                name="room"
-                value={formData.room}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-bold mb-1">Date:</label>
-              <input
-                type="date"
-                name="date"
-                value={formData.date}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-            <div>
-              <label className="block font-bold mb-1">Procedure Time:</label>
-              <input
-                type="text"
-                name="procedureTime"
-                value={formData.procedureTime}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-          </div>
-        </div>
+          </FormSection>
 
-        {/* Medical Personnel */}
-        <div className="mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-            <div>
-              <label className="block font-bold mb-1">Consultant Name:</label>
-              <input
-                type="text"
+          <FormSection
+            title="Medical Personnel"
+            icon={
+              <i className="fas fa-user-md"></i> /* Example FontAwesome, replace with Lucide if preferred */
+            }
+          >
+            {/* ... Consultant, Surgeon, Asst. Surgeon ... similar FormGroup structure ... */}
+            <FormGroup label="Consultant Name:" htmlFor="consultantName">
+              <Input
+                id="consultantName"
                 name="consultantName"
                 value={formData.consultantName}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
               />
-            </div>
-            <div>
-              <label className="block font-bold mb-1">Surgeon Name:</label>
-              <input
-                type="text"
+            </FormGroup>
+            <FormGroup label="Surgeon Name:" htmlFor="surgeonName">
+              <Input
+                id="surgeonName"
                 name="surgeonName"
                 value={formData.surgeonName}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
               />
-            </div>
-          </div>
-          <div>
-            <label className="block font-bold mb-1">Asst. Surgeon:</label>
-            <input
-              type="text"
-              name="asstSurgeon"
-              value={formData.asstSurgeon}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-        </div>
-
-        {/* Admission Category */}
-        <div className="mb-4">
-          <label className="block font-bold mb-1">Admission Category:</label>
-          <div className="flex items-center">
-            <input
-              type="radio"
-              id="elective"
-              name="admissionCategory"
-              value="Elective"
-              checked={formData.admissionCategory
-                .toLowerCase()
-                .includes("elective")}
-              onChange={handleChange}
-              className="mr-1"
-            />
-            <label htmlFor="elective" className="mr-4">
-              Elective
-            </label>
-            <input
-              type="radio"
-              id="emergency"
-              name="admissionCategory"
-              value="Emergency"
-              checked={formData.admissionCategory
-                .toLowerCase()
-                .includes("emergency")}
-              onChange={handleChange}
-              className="mr-1"
-            />
-            <label htmlFor="emergency">Emergency</label>
-          </div>
-        </div>
-
-        {/* Anesthesia */}
-        <div className="mb-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-bold mb-1">Anesthetist(s):</label>
-              <input
-                type="text"
-                name="anesthetist"
-                value={formData.anesthetist}
+            </FormGroup>
+            <FormGroup label="Asst. Surgeon:" htmlFor="asstSurgeon">
+              <Input
+                id="asstSurgeon"
+                name="asstSurgeon"
+                value={formData.asstSurgeon}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
               />
-            </div>
-            <div>
-              <label className="block font-bold mb-1">Anesthesia Type:</label>
-              <input
-                type="text"
-                name="anesthesiaType"
-                value={formData.anesthesiaType}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              />
-            </div>
-          </div>
-        </div>
+            </FormGroup>
+          </FormSection>
 
-        {/* Surgical Specimens */}
-        <div className="mb-4">
-          <label className="block font-bold mb-1">Surgical Specimens:</label>
-          <div className="mb-2">
-            <select
-              name="specimens"
-              value={formData.specimens}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
+          <FormSection title="Admission & Anesthesia">
+            <FormGroup label="Admission Category:" htmlFor="admissionCategory">
+              <RadioGroup
+                name="admissionCategory"
+                value={formData.admissionCategory}
+                onValueChange={handleRadioChange("admissionCategory")}
+                className="flex gap-4 items-center"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Elective" id="elective" />
+                  <Label htmlFor="elective">Elective</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Emergency" id="emergency" />
+                  <Label htmlFor="emergency">Emergency</Label>
+                </div>
+              </RadioGroup>
+            </FormGroup>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--spacing-md)]">
+              <FormGroup label="Anesthetist(s):" htmlFor="anesthetist">
+                <Input
+                  id="anesthetist"
+                  name="anesthetist"
+                  value={formData.anesthetist}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="Anesthesia Type:" htmlFor="anesthesiaType">
+                <Input
+                  id="anesthesiaType"
+                  name="anesthesiaType"
+                  value={formData.anesthesiaType}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+            </div>
+          </FormSection>
+
+          <FormSection title="Operative Details">
+            <FormGroup label="Surgical Specimens:" htmlFor="specimens">
+              <Select
+                name="specimens"
+                value={formData.specimens}
+                onValueChange={handleSelectChange("specimens")}
+              >
+                <SelectTrigger id="specimens">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Yes">Yes</SelectItem>
+                  <SelectItem value="No">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormGroup>
+            {formData.specimens === "Yes" && (
+              <FormGroup
+                label="If Yes, please mention:"
+                htmlFor="specimensDetails"
+              >
+                <Input
+                  id="specimensDetails"
+                  name="specimensDetails"
+                  value={formData.specimensDetails}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+            )}
+
+            <FormGroup label="Estimated Blood Loss (ml):" htmlFor="bloodLoss">
+              <Input
+                id="bloodLoss"
+                name="bloodLoss"
+                type="number"
+                value={formData.bloodLoss}
+                onChange={handleChange}
+              />
+            </FormGroup>
+
+            <FormGroup label="Transfusion:" htmlFor="transfusion">
+              <Select
+                name="transfusion"
+                value={formData.transfusion}
+                onValueChange={handleSelectChange("transfusion")}
+              >
+                <SelectTrigger id="transfusion">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Yes">Yes</SelectItem>
+                  <SelectItem value="No">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormGroup>
+            {formData.transfusion === "Yes" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--spacing-md)]">
+                <FormGroup label="Units Used:" htmlFor="unitsUsed">
+                  <Input
+                    id="unitsUsed"
+                    name="unitsUsed"
+                    value={formData.unitsUsed}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                <FormGroup label="Amount (ml):" htmlFor="mlUsed">
+                  <Input
+                    id="mlUsed"
+                    name="mlUsed"
+                    type="number"
+                    value={formData.mlUsed}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+              </div>
+            )}
+          </FormSection>
+
+          <FormSection title="Diagnoses & Procedure">
+            <FormGroup
+              label="Pre-operative Diagnosis:"
+              htmlFor="preOperativeDiagnosis"
             >
-              <option value="">Select</option>
-              <option value="Yes" selected={!!formData.specimens}>
-                Yes
-              </option>
-              <option value="No" selected={!formData.specimens}>
-                No
-              </option>
-            </select>
-          </div>
-          <div>
-            <label className="block font-bold mb-1">
-              If Yes, please mention:
-            </label>
-            <input
-              type="text"
-              name="specimensDetails"
-              value={formData.specimensDetails}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-        </div>
-
-        {/* Blood Loss */}
-        <div className="mb-4">
-          <label className="block font-bold mb-1">Blood Loss (ml):</label>
-          <input
-            type="text"
-            name="bloodLoss"
-            value={formData.bloodLoss}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-
-        {/* Transfusion */}
-        <div className="mb-4">
-          <label className="block font-bold mb-1">Transfusion:</label>
-          <div className="mb-2">
-            <select
-              name="transfusion"
-              value={formData.transfusion}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              <Textarea
+                id="preOperativeDiagnosis"
+                name="preOperativeDiagnosis"
+                value={formData.preOperativeDiagnosis}
+                onChange={handleChange}
+                rows={4}
+              />
+            </FormGroup>
+            <FormGroup
+              label="Post-operative Diagnosis:"
+              htmlFor="postOperativeDiagnosis"
             >
-              <option value="">Select</option>
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-bold mb-1">Units Used:</label>
-              <input
-                type="text"
-                name="unitsUsed"
-                value={formData.unitsUsed}
+              <Textarea
+                id="postOperativeDiagnosis"
+                name="postOperativeDiagnosis"
+                value={formData.postOperativeDiagnosis}
                 onChange={handleChange}
-                placeholder="Unit"
-                className="w-full p-2 border border-gray-300 rounded"
+                rows={4}
               />
-            </div>
-            <div>
-              <label className="block font-bold mb-1">Amount (ml):</label>
-              <input
-                type="text"
-                name="mlUsed"
-                value={formData.mlUsed}
+            </FormGroup>
+            <FormGroup
+              label="Operation Title / Procedure(s):"
+              htmlFor="operationTitle"
+            >
+              <Textarea
+                id="operationTitle"
+                name="operationTitle"
+                value={formData.operationTitle}
                 onChange={handleChange}
-                placeholder="ml"
-                className="w-full p-2 border border-gray-300 rounded"
+                rows={4}
               />
-            </div>
-          </div>
-        </div>
+            </FormGroup>
+            <FormGroup
+              label="Surgical Procedure & Findings:"
+              htmlFor="surgicalProcedure"
+            >
+              <Textarea
+                id="surgicalProcedure"
+                name="surgicalProcedure"
+                value={formData.surgicalProcedure}
+                onChange={handleChange}
+                rows={6}
+              />
+            </FormGroup>
+          </FormSection>
 
-        {/* Diagnoses */}
-        <div className="mb-4">
-          <label className="block font-bold mb-1">
-            Pre-operative Diagnosis:
-          </label>
-          <textarea
-            name="preOperativeDiagnosis"
-            value={formData.preOperativeDiagnosis}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded h-24"
-          ></textarea>
-        </div>
+          <FormSection title="Complications">
+            <FormGroup label="Complications Occurred:" htmlFor="complications">
+              <Select
+                name="complications"
+                value={formData.complications}
+                onValueChange={handleSelectChange("complications")}
+              >
+                <SelectTrigger id="complications">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Yes">Yes</SelectItem>
+                  <SelectItem value="No">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormGroup>
+            {formData.complications === "Yes" && (
+              <FormGroup
+                label="If Yes, please detail:"
+                htmlFor="complicationsDetails"
+              >
+                <Textarea
+                  id="complicationsDetails"
+                  name="complicationsDetails"
+                  value={formData.complicationsDetails}
+                  onChange={handleChange}
+                  rows={3}
+                />
+              </FormGroup>
+            )}
+          </FormSection>
 
-        <div className="mb-4">
-          <label className="block font-bold mb-1">
-            Post-operative Diagnosis:
-          </label>
-          <textarea
-            name="postOperativeDiagnosis"
-            value={formData.postOperativeDiagnosis}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded h-24"
-          ></textarea>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-bold mb-1">
-            Operation Title / Procedure(s):
-          </label>
-          <textarea
-            name="operationTitle"
-            value={formData.operationTitle}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded h-24"
-          ></textarea>
-        </div>
-
-        <div className="mb-4">
-          <label className="block font-bold mb-1">
-            Surgical Procedure & Findings:
-          </label>
-          <textarea
-            name="surgicalProcedure"
-            value={formData.surgicalProcedure}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded h-32"
-          ></textarea>
-        </div>
-
-        {/* Complications */}
-        <div className="mb-4">
-          <label className="block font-bold mb-1">Complications:</label>
-          <select
-            name="complications"
-            value={formData.complications}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded mb-2"
+          <FormSection
+            title="Surgeon's Attestation"
+            icon={<CalendarClockIcon size={20} />}
           >
-            <option value="">Select</option>
-            <option value="Yes">Yes</option>
-            <option
-              value="No"
-              selected={formData.complications
-                .toLowerCase()
-                .includes("no intraoperative")}
-            >
-              No
-            </option>
-          </select>
-          <div>
-            <label className="block font-bold mb-1">
-              If Yes, please mention:
-            </label>
-            <input
-              type="text"
-              name="complicationsDetails"
-              value={formData.complicationsDetails}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-        </div>
-
-        {/* Signature Section */}
-        <div className="mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <div className="mb-2">
-                <label className="block font-bold mb-1">Surgeon Name:</label>
-                <input
-                  type="text"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--spacing-md)]">
+              <FormGroup
+                label="Surgeon Name (for signature):"
+                htmlFor="surgeonNameSign"
+              >
+                <Input
+                  id="surgeonNameSign"
                   name="surgeonNameSign"
                   value={formData.surgeonNameSign}
                   onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-4 mb-2">
-                <div>
-                  <label className="block font-bold mb-1">ID No:</label>
-                  <input
-                    type="text"
-                    name="surgeonID"
-                    value={formData.surgeonID}
-                    onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold mb-1">Date:</label>
-                  <input
-                    type="date"
-                    name="signDate"
-                    value={formData.signDate}
-                    onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded"
-                  />
-                </div>
-              </div>
-              <div className="border-t border-dotted border-gray-800 pt-1 text-center mt-8 mb-4">
-                Signature & Stamp
-              </div>
-              <div>
-                <label className="block font-bold mb-1">Time:</label>
-                <input
-                  type="time"
+              </FormGroup>
+              <FormGroup label="Surgeon ID No.:" htmlFor="surgeonID">
+                <Input
+                  id="surgeonID"
+                  name="surgeonID"
+                  value={formData.surgeonID}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--spacing-md)]">
+              <FormGroup label="Date Signed:" htmlFor="signDate">
+                <Input
+                  id="signDate"
+                  name="signDate"
+                  type="date"
+                  value={formData.signDate}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+              <FormGroup label="Time Signed:" htmlFor="signTime">
+                <Input
+                  id="signTime"
                   name="signTime"
+                  type="time"
                   value={formData.signTime}
                   onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded"
                 />
-              </div>
+              </FormGroup>
             </div>
+            <div className="mt-[var(--spacing-md)] border-t border-dashed border-border pt-[var(--spacing-sm)] text-center text-sm text-muted-foreground">
+              Electronic Signature & Stamp Placeholder
+            </div>
+          </FormSection>
+
+          <div className="flex justify-end gap-[var(--spacing-sm)] pt-[var(--spacing-md)] border-t">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.print()}
+            >
+              {" "}
+              {/* Example Print */}
+              <Printer className="mr-2 h-4 w-4" /> Print Report
+            </Button>
+            <Button type="submit" size="lg">
+              <Save className="mr-2 h-4 w-4" /> Save Operation Report
+            </Button>
           </div>
-        </div>
-      </div>
-    </div>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
 
