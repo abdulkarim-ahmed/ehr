@@ -44,7 +44,7 @@ import { UpcomingAppointmentsWidget } from "./UpcomingAppointmentsWidget"
 
 interface PatientPageProps {
   token: string
-  env: string
+  iframeUrl: string
   theme: string
   CTA: string
   patient: CurrentPatientContext
@@ -53,19 +53,14 @@ interface PatientPageProps {
 
 export default function PatientPage({
   token,
-  env,
+  iframeUrl: baseUrl,
   theme: iframeThemeName,
   CTA,
   patient,
   onReset
 }: PatientPageProps) {
-  // ... (existing state and useEffects for iframeUrl, sidebarState, summaryData etc.)
-  const baseUrl =
-    env === "prod"
-      ? import.meta.env.VITE_IFRAME_URL
-      : import.meta.env.VITE_IFRAME_DEV_URL
   const iframeUrl = useMemo(() => {
-    /* ... existing memo ... */ return `${baseUrl}${token}&theme=${iframeThemeName}&patient_id=${
+    return `${baseUrl}${token}&theme=${iframeThemeName}&patient_id=${
       patient.patient_id
     }&visit_id=${patient.visit_id}${CTA ? `&cta=${CTA}` : ""}`
   }, [
@@ -76,6 +71,7 @@ export default function PatientPage({
     patient.visit_id,
     CTA
   ])
+
   const { summaryData, icdData, resetSummaryData } = useContext(GlobalContext)
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,

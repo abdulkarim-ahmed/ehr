@@ -31,6 +31,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from "@/components/ui/dropdown-menu"
+import { ENVS } from "./lib/env"
 
 const AppLogo = () => (
   <div className="flex items-center justify-center mb-8 text-primary">
@@ -228,29 +229,28 @@ export default function App() {
                   value={env}
                   name="env"
                   onValueChange={setEnv}
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--spacing-sm)]" /* Using spacing var */
+                  className="grid grid-cols-1 sm:grid-cols-4 gap-[var(--spacing-sm)]"
                 >
-                  {["dev", "prod", "altProd"].map((envValue) => (
-                    <div key={envValue} className="flex items-center">
+                  {Object.entries(ENVS).map(([envKey]) => (
+                    <div key={envKey} className="flex items-center">
                       <RadioGroupItem
-                        value={envValue}
-                        id={`env-${envValue}`}
+                        value={envKey}
+                        id={`env-${envKey}`}
                         className="peer sr-only"
                       />
                       <label
-                        htmlFor={`env-${envValue}`}
-                        className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-[var(--spacing-sm)] hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer w-full text-[var(--font-size-sm)] transition-colors" /* Using font and spacing vars */
+                        htmlFor={`env-${envKey}`}
+                        className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-[var(--spacing-sm)] hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary cursor-pointer w-full text-[var(--font-size-sm)] transition-colors"
                       >
-                        {envValue.charAt(0).toUpperCase() +
-                          envValue.slice(1).replace("altP", "Alt Prod")}
+                        {envKey
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (s) => s.toUpperCase())}
                       </label>
                     </div>
                   ))}
                 </RadioGroup>
               </div>
               <div className="space-y-[var(--spacing-sm)]">
-                {" "}
-                {/* Using spacing var */}
                 <label className="text-sm font-medium text-foreground/80 flex items-center">
                   <Palette className="w-4 h-4 mr-2 text-primary" /> Select
                   Visual Theme
@@ -290,8 +290,6 @@ export default function App() {
                 type="submit"
                 className="w-full h-12 text-[var(--font-size-lg)]"
               >
-                {" "}
-                {/* Using font var */}
                 Submit & Launch
               </Button>
             </form>
@@ -325,18 +323,14 @@ export default function App() {
                     setCurrentVisualTheme(value as Theme)
                   }
                 >
-                  {THEME_OPTIONS.map(
-                    (
-                      option // Ensure THEME_OPTIONS matches css classes
-                    ) => (
-                      <DropdownMenuRadioItem
-                        key={option.value}
-                        value={option.value}
-                      >
-                        {option.label}
-                      </DropdownMenuRadioItem>
-                    )
-                  )}
+                  {THEME_OPTIONS.map((option) => (
+                    <DropdownMenuRadioItem
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </DropdownMenuRadioItem>
+                  ))}
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -366,7 +360,7 @@ export default function App() {
         {patient ? (
           <PatientPage
             token={token}
-            env={env}
+            iframeUrl={ENVS[env as keyof typeof ENVS]}
             theme={iframeTheme}
             CTA={CTA}
             patient={patient}
