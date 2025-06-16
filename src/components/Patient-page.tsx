@@ -38,8 +38,8 @@ export default function PatientPage({
 
   let iframeUrl = `${baseUrl}${token}&theme=${theme}`
 
-  if (patient.patient_id) iframeUrl += `&patient_id=${patient.patient_id}`
-  if (patient.visit_id) iframeUrl += `&visit_id=${patient.visit_id}`
+  if (patient.patient_id) iframeUrl += `&px_id=${patient.patient_id}`
+  if (patient.visit_id) iframeUrl += `&ex_id=${patient.visit_id}`
   if (CTA) iframeUrl += `&cta=${CTA}`
 
   const { summaryData, icdData, resetSummaryData } = useContext(GlobalContext)
