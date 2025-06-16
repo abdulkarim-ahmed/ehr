@@ -60,9 +60,9 @@ export default function PatientPage({
   onReset
 }: PatientPageProps) {
   const iframeUrl = useMemo(() => {
-    return `${baseUrl}${token}&theme=${iframeThemeName}&patient_id=${
+    return `${baseUrl}${token}&theme=${iframeThemeName}&px_id=${
       patient.patient_id
-    }&visit_id=${patient.visit_id}${CTA ? `&cta=${CTA}` : ""}`
+    }&ex_id=${patient.visit_id}${CTA ? `&cta=${CTA}` : ""}`
   }, [
     baseUrl,
     token,
