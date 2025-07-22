@@ -78,18 +78,9 @@ export default function PatientPage({
     isMinimized: false
   })
 
-  const currentPatientAllergies = useMemo(
-    () => mockAllergiesData,
-    [patient.patient_id]
-  )
-  const currentPatientAppointments = useMemo(
-    () => mockAppointmentsData,
-    [patient.patient_id]
-  )
-  const currentPatientPrescriptions = useMemo(
-    () => mockPrescriptionsData,
-    [patient.patient_id]
-  )
+  const currentPatientAllergies = useMemo(() => mockAllergiesData, [])
+  const currentPatientAppointments = useMemo(() => mockAppointmentsData, [])
+  const currentPatientPrescriptions = useMemo(() => mockPrescriptionsData, [])
 
   const handleOpenSidebar = () =>
     setSidebarState({ isOpen: true, isMinimized: false })
@@ -300,8 +291,6 @@ export default function PatientPage({
                 value={tabInfo.value}
                 className="mt-0 animate-fadeIn"
               >
-                {" "}
-                {/* Added fadeIn animation */}
                 {tabInfo.content}
               </TabsContent>
             ))}
