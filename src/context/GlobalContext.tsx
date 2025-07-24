@@ -151,6 +151,8 @@ export const GlobalContextProvider = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      console.log('Message received from parent:', event.data)
+      
       // if no type this means data is of summary
       if (!event?.data?.type) {
         const summary = handleSummary(event.data)
