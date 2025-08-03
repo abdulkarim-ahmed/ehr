@@ -84,8 +84,6 @@ export default function PatientPage({
 
   const handleOpenSidebar = () =>
     setSidebarState({ isOpen: true, isMinimized: false })
-  const handleCloseSidebar = () =>
-    setSidebarState({ isOpen: false, isMinimized: false })
   const handleMinimizeSidebar = (minimized: boolean) =>
     setSidebarState((prev) => ({ ...prev, isMinimized: minimized }))
   const handleResetApp = () => {
@@ -305,7 +303,6 @@ export default function PatientPage({
         isOpen={sidebarState.isOpen}
         isMinimized={sidebarState.isMinimized}
         onMinimize={handleMinimizeSidebar}
-        onClose={handleCloseSidebar}
         iframeUrl={iframeUrl}
       />
     </div>

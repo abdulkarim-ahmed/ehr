@@ -1,18 +1,16 @@
 import React, { useRef, useState, useCallback, useEffect } from "react"
-import { ChevronLeft, ChevronRight, X } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useClickOutside } from "@/hooks/use-click-outside"
 
 export const IframeSidebar = ({
   isOpen,
   isMinimized,
   onMinimize,
-  onClose,
   iframeUrl
 }: {
   isOpen: boolean
   isMinimized: boolean
   onMinimize: (state: boolean) => void
-  onClose: () => void
   iframeUrl: string
 }) => {
   const sidebarRef = useRef(null)
@@ -118,7 +116,7 @@ export const IframeSidebar = ({
           width: isMinimized ? 0 : `${width}px`
         }}
       >
-        <div className="flex absolute -left-11 top-3 gap-1 z-[60]">
+        <div className="absolute -left-11 top-3 z-[60]">
           <button
             type="button"
             className="p-1 rounded-full bg-white hover:bg-gray-100 shadow-sm border border-gray-200 transition-colors duration-200"
@@ -129,13 +127,6 @@ export const IframeSidebar = ({
             ) : (
               <ChevronRight className="w-5 h-5" />
             )}
-          </button>
-          <button
-            type="button"
-            className="p-1 rounded-full bg-white hover:bg-red-100 hover:text-red-600 shadow-sm border border-gray-200 transition-colors duration-200"
-            onClick={onClose}
-          >
-            <X className="w-5 h-5" />
           </button>
         </div>
 
