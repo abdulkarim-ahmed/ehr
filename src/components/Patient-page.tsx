@@ -15,7 +15,8 @@ import { PatientHistory } from "./patient-history"
 import {
   mockAllergiesData,
   mockAppointmentsData,
-  mockPrescriptionsData
+  mockPrescriptionsData,
+  USER_XID
 } from "@/lib/mock-data"
 import { AllergiesSection } from "./AllergiesSection" // Full section for its own tab
 
@@ -60,9 +61,13 @@ export default function PatientPage({
   onReset
 }: PatientPageProps) {
   const iframeUrl = useMemo(() => {
+    const isFakeeh = iframeThemeName.toLowerCase() === "fakeeh"
+
     return `${baseUrl}${token}&theme=${iframeThemeName}&px_id=${
       patient.patient_id
-    }&ex_id=${patient.visit_id}${CTA ? `&cta=${CTA}` : ""}`
+    }&ex_id=${patient.visit_id}${CTA ? `&cta=${CTA}` : ""}${
+      isFakeeh && USER_XID ? `&ux_id=${USER_XID}` : ""
+    }`
   }, [
     baseUrl,
     token,

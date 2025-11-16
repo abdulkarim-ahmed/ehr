@@ -7,6 +7,8 @@ import {
   Patient
 } from "./types"
 
+export const USER_XID = "user-1234"
+
 export const mockPatientsList: Patient[] = [
   {
     id: "P001",
