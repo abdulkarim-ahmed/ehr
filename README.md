@@ -24,6 +24,7 @@ npm install
 Create a `.env` file with the following variables:
 ```env
 VITE_PASSWORD=your_app_password
+VITE_APP_MEDIPULSE_URL=https://your-medipulse-api.com
 VITE_IFRAME_URL_DEV=http://localhost:5173/iframe?access_token=
 VITE_IFRAME_URL_ALT=http://localhost:5173/iframe?access_token=
 VITE_IFRAME_URL_ALTPROD=http://localhost:5173/iframe?access_token=
@@ -48,7 +49,7 @@ npm run lint
 
 ## Application Flow
 
-1. **Authentication**: Password verification → Bearer token configuration
+1. **Authentication**: Password verification → Email/password login (token fetched automatically)
 2. **Environment Selection**: Choose target SAHL environment (dev/alt/altProd/prod)
 3. **Patient Management**: Select patients from dashboard
 4. **Embedded Experience**: SAHL main app loads in iframe with patient context

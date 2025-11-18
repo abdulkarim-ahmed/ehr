@@ -32,6 +32,7 @@ import {
   DropdownMenuRadioItem
 } from "@/components/ui/dropdown-menu"
 import { ENVS } from "./lib/env"
+import { login as authenticate } from "@/services/auth"
 
 const AppLogo = () => (
   <div className="flex items-center justify-center mb-8 text-primary">
@@ -48,6 +49,10 @@ export default function App() {
   const [isPasswordVerified, setIsPasswordVerified] = useState(false)
 
   const [token, setToken] = useState("")
+  const [loginEmail, setLoginEmail] = useState("")
+  const [loginPassword, setLoginPassword] = useState("")
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
   const [env, setEnv] = useState("dev")
   const [iframeTheme, setIframeTheme] = useState("")
   const [CTA, setCTA] = useState("")
@@ -83,22 +88,51 @@ export default function App() {
     }
   }
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (token.trim().length > 0) {
-      localStorage.setItem("bearerToken", token)
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError("Email and password are required.")
+      return
+    }
+
+    setIsLoggingIn(true)
+    setLoginError(null)
+    try {
+      const { token: accessToken, refresh_token } = await authenticate({
+        email: loginEmail.trim(),
+        password: loginPassword
+      })
+
+      localStorage.setItem("bearerToken", accessToken)
       localStorage.setItem("env", env)
       localStorage.setItem("iframeTheme", iframeTheme)
+      if (refresh_token) {
+        localStorage.setItem("refreshToken", refresh_token)
+      } else {
+        localStorage.removeItem("refreshToken")
+      }
+
+      setToken(accessToken)
       setIsAuthenticated(true)
-    } else {
-      alert("Bearer token is required.")
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to log in. Please try again."
+      setLoginError(message)
+    } finally {
+      setIsLoggingIn(false)
     }
   }
 
   const handleLogout = () => {
     localStorage.removeItem("bearerToken")
+    localStorage.removeItem("refreshToken")
     localStorage.removeItem("env")
     localStorage.removeItem("iframeTheme")
+    setToken("")
+    setLoginPassword("")
+    setLoginEmail("")
     setIsAuthenticated(false)
     setIsPasswordVerified(false)
     setPatient(null)
@@ -171,7 +205,7 @@ export default function App() {
             {" "}
             {/* Using spacing var */}
             <form
-              onSubmit={handleTokenSubmit}
+              onSubmit={handleLoginSubmit}
               className="space-y-[var(--spacing-lg)]"
             >
               {" "}
@@ -181,13 +215,26 @@ export default function App() {
                 {/* Using spacing var */}
                 <div>
                   <label className="text-sm font-medium text-foreground/80 mb-[var(--spacing-xs)] block">
-                    Bearer Token <span className="text-destructive">*</span>
+                    Email <span className="text-destructive">*</span>
                   </label>
                   <Input
-                    type="text"
-                    placeholder="Enter Bearer Token"
-                    value={token}
-                    onChange={(e) => setToken(e.target.value)}
+                    type="email"
+                    placeholder="you@example.com"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    required
+                    className="h-11"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground/80 mb-[var(--spacing-xs)] block">
+                    Password <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    type="password"
+                    placeholder="Enter your password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                     required
                     className="h-11"
                   />
@@ -216,6 +263,9 @@ export default function App() {
                     className="h-11"
                   />
                 </div>
+                {loginError ? (
+                  <p className="text-sm text-destructive">{loginError}</p>
+                ) : null}
               </div>
               <div className="space-y-[var(--spacing-sm)]">
                 {" "}
@@ -289,8 +339,9 @@ export default function App() {
               <Button
                 type="submit"
                 className="w-full h-12 text-[var(--font-size-lg)]"
+                disabled={isLoggingIn}
               >
-                Submit & Launch
+                {isLoggingIn ? "Signing in..." : "Submit & Launch"}
               </Button>
             </form>
           </CardContent>
