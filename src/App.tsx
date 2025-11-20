@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import {
   Card,
   CardContent,
@@ -88,6 +88,7 @@ export default function App() {
   } | null>(null)
 
   const actualPass = import.meta.env.VITE_PASSWORD
+  const hasInitialized = useRef(false)
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem("bearerToken")
@@ -165,6 +166,9 @@ export default function App() {
   }, [refreshAccessTokenWithStored])
 
   useEffect(() => {
+    if (hasInitialized.current) return
+    hasInitialized.current = true
+
     const storedToken = localStorage.getItem("bearerToken")
     const storedRefreshToken = localStorage.getItem("refreshToken")
     const localEnv = localStorage.getItem("env")
