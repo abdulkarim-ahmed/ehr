@@ -30,6 +30,8 @@ VITE_IFRAME_URL_ALTPROD=http://localhost:5173/iframe?access_token=
 VITE_IFRAME_URL_PROD=http://localhost:5173/iframe?access_token=
 ```
 
+Backend API base URLs for login are defined in `src/config/api.ts` so you can adjust staging/production endpoints without touching environment variables.
+
 ### Development
 ```bash
 npm run dev
@@ -48,7 +50,7 @@ npm run lint
 
 ## Application Flow
 
-1. **Authentication**: Password verification → Bearer token configuration
+1. **Authentication**: Password verification → SAHL login (email & password) → Token stored automatically (login endpoint switches between staging/prod based on the selected environment)
 2. **Environment Selection**: Choose target SAHL environment (dev/alt/altProd/prod)
 3. **Patient Management**: Select patients from dashboard
 4. **Embedded Experience**: SAHL main app loads in iframe with patient context

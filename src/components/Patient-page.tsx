@@ -94,6 +94,7 @@ export default function PatientPage({
   const handleResetApp = () => {
     resetSummaryData?.()
     localStorage.removeItem("bearerToken")
+    localStorage.removeItem("refreshToken")
     localStorage.removeItem("env")
     localStorage.removeItem("iframeTheme")
     window.location.reload()

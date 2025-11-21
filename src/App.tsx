@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import {
   Card,
   CardContent,
@@ -18,7 +18,8 @@ import {
   Activity,
   Palette,
   LogOut,
-  Settings
+  Settings,
+  RefreshCw
 } from "lucide-react"
 import { useTheme, Theme, THEME_OPTIONS } from "./context/ThemeContext" // Ensure THEME_OPTIONS keys match CSS classes
 import {
@@ -31,7 +32,25 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem
 } from "@/components/ui/dropdown-menu"
-import { ENVS } from "./lib/env"
+import { ENVS, getApiBaseUrlForEnv } from "./lib/env"
+import { loginWithCredentials, refreshAccessToken, ApiError } from "./lib/auth"
+
+const decodeTokenExpiry = (token: string): number | null => {
+  if (typeof window === "undefined") return null
+  try {
+    const parts = token.split(".")
+    if (parts.length < 2) return null
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/")
+    const decoded = window.atob(base64)
+    const payload = JSON.parse(decoded)
+    if (payload && typeof payload.exp === "number") {
+      return payload.exp * 1000
+    }
+  } catch {
+    // Ignore decode errors
+  }
+  return null
+}
 
 const AppLogo = () => (
   <div className="flex items-center justify-center mb-8 text-primary">
@@ -48,9 +67,19 @@ export default function App() {
   const [isPasswordVerified, setIsPasswordVerified] = useState(false)
 
   const [token, setToken] = useState("")
+  const [refreshToken, setRefreshToken] = useState("")
   const [env, setEnv] = useState("dev")
   const [iframeTheme, setIframeTheme] = useState("")
   const [CTA, setCTA] = useState("")
+  const [loginEmail, setLoginEmail] = useState("")
+  const [loginPassword, setLoginPassword] = useState("")
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [loginError, setLoginError] = useState("")
+  const [isRefreshingToken, setIsRefreshingToken] = useState(false)
+  const [tokenStatus, setTokenStatus] = useState<{
+    type: "success" | "error"
+    message: string
+  } | null>(null)
 
   const [patient, setPatient] = useState<{
     patient_id: string
@@ -59,20 +88,136 @@ export default function App() {
   } | null>(null)
 
   const actualPass = import.meta.env.VITE_PASSWORD
+  const hasInitialized = useRef(false)
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("bearerToken")
+    localStorage.removeItem("refreshToken")
+    localStorage.removeItem("env")
+    localStorage.removeItem("iframeTheme")
+    setToken("")
+    setRefreshToken("")
+    setLoginEmail("")
+    setLoginPassword("")
+    setLoginError("")
+    setTokenStatus(null)
+    setIsAuthenticated(false)
+    setIsPasswordVerified(false)
+    setPatient(null)
+  }, [])
+
+  const refreshAccessTokenWithStored = useCallback(
+    async (overrideRefreshToken?: string, envOverride?: string) => {
+      const refreshTokenToUse = (overrideRefreshToken ?? refreshToken)?.trim()
+      const envKey = envOverride ?? env
+
+      if (!refreshTokenToUse) {
+        setTokenStatus({
+          type: "error",
+          message: "No refresh token available. Please sign in again."
+        })
+        return null
+      }
+
+      setIsRefreshingToken(true)
+      try {
+        const apiBaseUrl = getApiBaseUrlForEnv(envKey)
+        const { token: newToken, refresh_token: newRefreshToken } =
+          await refreshAccessToken(refreshTokenToUse, apiBaseUrl)
+
+        setToken(newToken)
+        localStorage.setItem("bearerToken", newToken)
+        if (newRefreshToken) {
+          setRefreshToken(newRefreshToken)
+          localStorage.setItem("refreshToken", newRefreshToken)
+        }
+
+        setIsAuthenticated(true)
+        setIsPasswordVerified(true)
+        setTokenStatus({
+          type: "success",
+          message: "Session refreshed."
+        })
+
+        return newToken
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Unable to refresh token. Please sign in again."
+        setTokenStatus({
+          type: "error",
+          message
+        })
+
+        if (error instanceof ApiError && error.status === 401) {
+          handleLogout()
+        }
+        return null
+      } finally {
+        setIsRefreshingToken(false)
+      }
+    },
+    [env, refreshToken, handleLogout]
+  )
+
+  const handleManualTokenRefresh = useCallback(() => {
+    void refreshAccessTokenWithStored()
+  }, [refreshAccessTokenWithStored])
 
   useEffect(() => {
+    if (hasInitialized.current) return
+    hasInitialized.current = true
+
     const storedToken = localStorage.getItem("bearerToken")
+    const storedRefreshToken = localStorage.getItem("refreshToken")
     const localEnv = localStorage.getItem("env")
     const localIframeTheme = localStorage.getItem("iframeTheme")
 
     setEnv(localEnv || "dev")
     setIframeTheme(localIframeTheme || "")
+
     if (storedToken) {
       setToken(storedToken)
       setIsAuthenticated(true)
       setIsPasswordVerified(true)
+    } else if (storedRefreshToken) {
+      setIsPasswordVerified(true)
     }
-  }, [])
+
+    if (storedRefreshToken) {
+      setRefreshToken(storedRefreshToken)
+      if (!storedToken) {
+        void refreshAccessTokenWithStored(storedRefreshToken, localEnv || "dev")
+      }
+    }
+  }, [refreshAccessTokenWithStored])
+
+  useEffect(() => {
+    if (!tokenStatus) return
+    const timeout = window.setTimeout(() => setTokenStatus(null), 5000)
+    return () => window.clearTimeout(timeout)
+  }, [tokenStatus])
+
+  useEffect(() => {
+    if (!token || !refreshToken) return
+    const expiryTime = decodeTokenExpiry(token)
+    if (!expiryTime) return
+
+    const refreshLeadTimeMs = 60 * 1000 // refresh 1 minute before expiry
+    const delay = expiryTime - Date.now() - refreshLeadTimeMs
+
+    if (delay <= 0) {
+      void refreshAccessTokenWithStored()
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      void refreshAccessTokenWithStored()
+    }, delay)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [token, refreshToken, refreshAccessTokenWithStored])
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -83,25 +228,55 @@ export default function App() {
     }
   }
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (token.trim().length > 0) {
-      localStorage.setItem("bearerToken", token)
+    if (!loginEmail.trim() || !loginPassword.trim()) {
+      setLoginError("Email and password are required.")
+      return
+    }
+
+    setLoginError("")
+    setIsLoggingIn(true)
+
+    try {
+      const apiBaseUrl = getApiBaseUrlForEnv(env)
+      const {
+        token: bearerToken,
+        refresh_token: refreshTokenFromApi
+      } = await loginWithCredentials(
+        {
+          email: loginEmail.trim(),
+          password: loginPassword
+        },
+        apiBaseUrl
+      )
+
+      setToken(bearerToken)
+      localStorage.setItem("bearerToken", bearerToken)
+      if (refreshTokenFromApi) {
+        setRefreshToken(refreshTokenFromApi)
+        localStorage.setItem("refreshToken", refreshTokenFromApi)
+      } else {
+        setRefreshToken("")
+        localStorage.removeItem("refreshToken")
+      }
       localStorage.setItem("env", env)
       localStorage.setItem("iframeTheme", iframeTheme)
       setIsAuthenticated(true)
-    } else {
-      alert("Bearer token is required.")
+      setLoginPassword("")
+      setTokenStatus({
+        type: "success",
+        message: "Signed in successfully."
+      })
+    } catch (error) {
+      setLoginError(
+        error instanceof Error
+          ? error.message
+          : "Unable to login. Please try again."
+      )
+    } finally {
+      setIsLoggingIn(false)
     }
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem("bearerToken")
-    localStorage.removeItem("env")
-    localStorage.removeItem("iframeTheme")
-    setIsAuthenticated(false)
-    setIsPasswordVerified(false)
-    setPatient(null)
   }
 
   if (!isPasswordVerified) {
@@ -171,7 +346,7 @@ export default function App() {
             {" "}
             {/* Using spacing var */}
             <form
-              onSubmit={handleTokenSubmit}
+              onSubmit={handleLoginSubmit}
               className="space-y-[var(--spacing-lg)]"
             >
               {" "}
@@ -181,17 +356,37 @@ export default function App() {
                 {/* Using spacing var */}
                 <div>
                   <label className="text-sm font-medium text-foreground/80 mb-[var(--spacing-xs)] block">
-                    Bearer Token <span className="text-destructive">*</span>
+                    Email <span className="text-destructive">*</span>
                   </label>
                   <Input
-                    type="text"
-                    placeholder="Enter Bearer Token"
-                    value={token}
-                    onChange={(e) => setToken(e.target.value)}
+                    type="email"
+                    placeholder="name@example.com"
+                    value={loginEmail}
+                    autoComplete="username"
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     required
                     className="h-11"
                   />
                 </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground/80 mb-[var(--spacing-xs)] block">
+                    Password <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    type="password"
+                    placeholder="Enter your password"
+                    value={loginPassword}
+                    autoComplete="current-password"
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                    className="h-11"
+                  />
+                </div>
+                {loginError && (
+                  <p className="text-sm text-destructive" role="alert">
+                    {loginError}
+                  </p>
+                )}
                 <div>
                   <label className="text-sm font-medium text-foreground/80 mb-[var(--spacing-xs)] block">
                     Iframe Theme Name (Optional)
@@ -289,8 +484,9 @@ export default function App() {
               <Button
                 type="submit"
                 className="w-full h-12 text-[var(--font-size-lg)]"
+                disabled={isLoggingIn}
               >
-                Submit & Launch
+                {isLoggingIn ? "Signing In..." : "Sign In & Launch"}
               </Button>
             </form>
           </CardContent>
@@ -344,6 +540,15 @@ export default function App() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
+                  onClick={handleManualTokenRefresh}
+                  disabled={isRefreshingToken || !refreshToken}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  {isRefreshingToken ? "Refreshing..." : "Refresh Token"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
                   onClick={handleLogout}
                   className="text-destructive focus:text-destructive focus:bg-destructive/10"
                 >
@@ -355,6 +560,18 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {tokenStatus && (
+        <div
+          className={`px-[var(--content-padding)] py-2 text-sm border-b ${
+            tokenStatus.type === "error"
+              ? "bg-destructive/10 text-destructive"
+              : "bg-emerald-50 text-emerald-700"
+          }`}
+        >
+          {tokenStatus.message}
+        </div>
+      )}
 
       <main className="flex-1">
         {patient ? (
