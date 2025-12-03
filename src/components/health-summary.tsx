@@ -283,7 +283,7 @@ const HealthSummary = ({
                       Linked Examinations:
                     </span>{" "}
                     <span className="text-foreground/80">
-                      {exam.mentionedLinkedExaminations.map((linked: any, idx: number) => 
+                      {exam.mentionedLinkedExaminations.map((linked: any) => 
                         typeof linked === 'string' 
                           ? linked 
                           : (linked?.name || linked?.code || JSON.stringify(linked))
