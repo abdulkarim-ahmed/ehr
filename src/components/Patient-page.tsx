@@ -152,6 +152,7 @@ export default function PatientPage({
             <VitalSignsForm
               chiefComplaint={summaryData.chiefComplaint || ""}
               significantSigns={summaryData.significantSigns || ""}
+              sections={summaryData.sections || []}
             />
           </CardContent>
         </Card>

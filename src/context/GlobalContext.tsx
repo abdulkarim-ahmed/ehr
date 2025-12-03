@@ -22,11 +22,22 @@ const handleSummary = (message: any): SummaryData => {
   let surgicalProcedureAndFindings = ""
   let complications = ""
 
+  const allSections: Array<{ title: string; content: string }> = []
+
   // Process each section
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   // biome-ignore lint/complexity/noForEach: <explanation>
   message?.summary?.forEach((section: any) => {
     const content = section.editedBody || section.body
+    const contentString = Array.isArray(content) 
+      ? content.join("\n") 
+      : (typeof content === 'string' ? content : String(content))
+    const sanitizedContent = sanitizeString(contentString)
+
+    allSections.push({
+      title: section.title || "Untitled",
+      content: sanitizedContent
+    })
 
     // Append content based on section titles
     switch (section.title) {
@@ -38,7 +49,7 @@ const handleSummary = (message: any): SummaryData => {
       case "Treatment Plan or Medical Advices":
       case "History of Presentation":
         // Append content to chiefComplaint with a new line
-        chiefComplaint += `${sanitizeString(content.join(" "))}\n`
+        chiefComplaint += `${sanitizedContent}\n`
         break
 
       case "Significant Sign":
@@ -46,40 +57,40 @@ const handleSummary = (message: any): SummaryData => {
       case "Significant Sign & Symptoms":
       case "Physical Examination (Significant Signs)":
         // Append content to significantSign with a new line
-        significantSign += `${sanitizeString(content.join(" "))}\n`
+        significantSign += `${sanitizedContent}\n`
         break
       case "Surgical Specimens":
-        surgicalSpecimens += `${sanitizeString(content.join(" "))}\n`
+        surgicalSpecimens += `${sanitizedContent}\n`
         break
       case "Blood Loss":
-        bloodLoss += `${sanitizeString(content.join(" "))}\n`
+        bloodLoss += `${sanitizedContent}\n`
         break
       case "Transfusion":
-        transfusion += `${sanitizeString(content.join(" "))}\n`
+        transfusion += `${sanitizedContent}\n`
         break
       case "Units Used":
-        unitsUsed += `${sanitizeString(content.join(" "))}\n`
+        unitsUsed += `${sanitizedContent}\n`
         break
       case "Pre-Operative Diagnosis":
-        preOperativeDiagnosis += `${sanitizeString(content.join(" "))}\n`
+        preOperativeDiagnosis += `${sanitizedContent}\n`
         break
       case "Post-Operative Diagnosis":
-        postOperativeDiagnosis += `${sanitizeString(content.join(" "))}\n`
+        postOperativeDiagnosis += `${sanitizedContent}\n`
         break
       case "Operative Title":
-        operativeTitle += `${sanitizeString(content.join(" "))}\n`
+        operativeTitle += `${sanitizedContent}\n`
         break
       case "Surgical Procedure & Findings":
-        surgicalProcedureAndFindings += `${sanitizeString(content.join(" "))}\n`
+        surgicalProcedureAndFindings += `${sanitizedContent}\n`
         break
       case "Complications":
-        complications += `${sanitizeString(content.join(" "))}\n`
+        complications += `${sanitizedContent}\n`
         break
       case "Admission Category":
-        admissionCategory += `${sanitizeString(content.join(" "))}\n`
+        admissionCategory += `${sanitizedContent}\n`
         break
       case "Anesthesia Type":
-        anesthesiaType += `${sanitizeString(content.join(" "))}\n`
+        anesthesiaType += `${sanitizedContent}\n`
         break
     }
   })
@@ -97,7 +108,8 @@ const handleSummary = (message: any): SummaryData => {
     surgicalProcedureAndFindings: surgicalProcedureAndFindings.trim(),
     complications: complications.trim(),
     admissionCategory: admissionCategory.trim(),
-    anesthesiaType: anesthesiaType.trim()
+    anesthesiaType: anesthesiaType.trim(),
+    sections: allSections
   }
 }
 
@@ -119,7 +131,8 @@ export const GlobalContextProvider = ({
     postOperativeDiagnosis: "",
     operativeTitle: "",
     surgicalProcedureAndFindings: "",
-    complications: ""
+    complications: "",
+    sections: []
   })
   const [icdData, setIcdData] = useState({
     diagnoses: {
@@ -191,7 +204,8 @@ export const GlobalContextProvider = ({
       postOperativeDiagnosis: "",
       operativeTitle: "",
       surgicalProcedureAndFindings: "",
-      complications: ""
+      complications: "",
+      sections: []
     })
   }
 

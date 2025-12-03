@@ -12,93 +12,137 @@ import {
   FormMessage
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { Save } from "lucide-react"
+import { SummarySection } from "@/types/ICDAutomation"
 
-const vitalSignsSchema = z.object({
-  chiefComplaint: z.string().min(1, "Chief complaint is required."),
-  significantSigns: z.string().min(1, "Significant signs are required.")
-})
+
+const createVitalSignsSchema = (sections: SummarySection[]) => {
+  const schemaObject: Record<string, z.ZodOptional<z.ZodString>> = {}
+  
+  sections.forEach((section) => {
+    const key = section.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+    if (key) {
+      schemaObject[key] = z.string().optional()
+    }
+  })
+  
+  schemaObject.chiefComplaint = z.string().optional()
+  schemaObject.significantSigns = z.string().optional()
+  
+  return z.object(schemaObject)
+}
 
 interface VitalSignsFormProps {
   chiefComplaint?: string
   significantSigns?: string
+  sections?: SummarySection[]
 }
 
 export function VitalSignsForm({
   chiefComplaint = "",
-  significantSigns = ""
+  significantSigns = "",
+  sections = []
 }: VitalSignsFormProps) {
-  const form = useForm<z.infer<typeof vitalSignsSchema>>({
-    resolver: zodResolver(vitalSignsSchema),
-    defaultValues: {
-      chiefComplaint: chiefComplaint,
-      significantSigns: significantSigns
+
+  const displaySections = useMemo(() => {
+    if (sections && sections.length > 0) {
+      return sections
     }
+
+    const fallbackSections: SummarySection[] = []
+    if (chiefComplaint) {
+      fallbackSections.push({ title: "Chief Complaint", content: chiefComplaint })
+    }
+    if (significantSigns) {
+      fallbackSections.push({ title: "Significant Signs & Symptoms", content: significantSigns })
+    }
+    return fallbackSections
+  }, [sections, chiefComplaint, significantSigns])
+
+  const schema = useMemo(() => createVitalSignsSchema(displaySections), [displaySections])
+  
+  const defaultValues = useMemo(() => {
+    const values: Record<string, string> = {}
+    displaySections.forEach((section) => {
+      const key = section.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+      if (key) {
+        values[key] = section.content
+      }
+    })
+
+    values.chiefComplaint = chiefComplaint
+    values.significantSigns = significantSigns
+    return values
+  }, [displaySections, chiefComplaint, significantSigns])
+
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues
   })
 
   useEffect(() => {
-    form.reset({
-      // Use form.reset to update defaultValues and form state
-      chiefComplaint: chiefComplaint,
-      significantSigns: significantSigns
-    })
-  }, [chiefComplaint, significantSigns, form])
+    form.reset(defaultValues)
+  }, [defaultValues, form])
 
-  function onSubmit(values: z.infer<typeof vitalSignsSchema>) {
-    console.log("Vital Signs Submitted:", values)
+  function onSubmit(values: z.infer<typeof schema>) {
+    console.log("Assessment Submitted:", values)
     // Add your submission logic here (e.g., API call)
-    alert("Vital signs saved! (Check console for data)")
+    alert("Assessment saved! (Check console for data)")
+  }
+
+  if (displaySections.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        <p>No assessment data available.</p>
+      </div>
+    )
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="chiefComplaint"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base font-semibold text-foreground/90">
-                Chief Complaint
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe the primary reason for the patient's visit..."
-                  {...field}
-                  className="min-h-[120px] text-base"
-                />
-              </FormControl>
-              <FormDescription>
-                The main reason the patient is seeking medical attention.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="significantSigns"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base font-semibold text-foreground/90">
-                Significant Signs & Symptoms
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="List any notable signs, symptoms, or observations..."
-                  {...field}
-                  className="min-h-[120px] text-base"
-                />
-              </FormControl>
-              <FormDescription>
-                Key observations or symptoms reported by the patient or
-                observed.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {displaySections.map((section) => {
+          const fieldKey = section.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "_")
+            .replace(/^_+|_+$/g, "")
+          
+          if (!fieldKey) return null
+
+          return (
+            <FormField
+              key={fieldKey}
+              control={form.control}
+              name={fieldKey as any}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base font-semibold text-foreground/90">
+                    {section.title}
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={`Enter ${section.title.toLowerCase()}...`}
+                      {...field}
+                      value={field.value || ""}
+                      className="min-h-[120px] text-base"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {section.title} information from the consultation summary.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )
+        })}
         <Button
           type="submit"
           size="lg"

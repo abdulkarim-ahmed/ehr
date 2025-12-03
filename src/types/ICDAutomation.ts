@@ -1,3 +1,8 @@
+export type SummarySection = {
+  title: string
+  content: string
+}
+
 export type SummaryData = {
   chiefComplaint?: string
   significantSigns?: string
@@ -12,6 +17,7 @@ export type SummaryData = {
   operativeTitle?: string
   surgicalProcedureAndFindings?: string
   complications?: string
+  sections?: SummarySection[]
 }
 
 export type Diagnosis = {
