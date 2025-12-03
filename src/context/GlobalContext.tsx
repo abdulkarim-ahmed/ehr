@@ -143,7 +143,9 @@ export const GlobalContextProvider = ({
       additionalDiagnosis: []
     },
     medications: [],
-    orders: []
+    orders: [],
+    allergies: [],
+    physicalExaminations: []
   })
 
   const sendMessageToIframe = (message: any, targetOrigin: string = "*") => {
@@ -177,7 +179,9 @@ export const GlobalContextProvider = ({
         setIcdData({
           diagnoses: event.data.data.diagnoses,
           medications: event.data.data.medications,
-          orders: event.data.data.orders
+          orders: event.data.data.orders,
+          allergies: event.data.data.allergies || [],
+          physicalExaminations: event.data.data.physicalExaminations || []
         })
       } else if (event.data.type === "get-patient-history") {
         sendMessageToIframe(initialConsultationsData)

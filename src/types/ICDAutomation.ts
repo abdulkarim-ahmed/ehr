@@ -44,3 +44,17 @@ export type Order = {
   code: string
   name: string
 }
+
+export type Allergy = {
+  allergen?: string
+  code: string
+  description?: string
+  name: string
+}
+
+export type PhysicalExamination = {
+  code: string
+  name: string
+  mentionedLinkedExaminations?: any[]
+  type?: string
+}
