@@ -2,7 +2,9 @@ import {
   Diagnoses,
   Medication,
   Order,
-  SummaryData
+  SummaryData,
+  Allergy,
+  PhysicalExamination
 } from "@/types/ICDAutomation"
 import { createContext } from "react"
 
@@ -12,6 +14,8 @@ export interface GlobalContextProps {
     diagnoses: Diagnoses
     medications: Medication[]
     orders: Order[]
+    allergies?: Allergy[]
+    physicalExaminations?: PhysicalExamination[]
   }
   resetSummaryData?: () => void
   sendMessageToIframe?: (message: object, targetOrigin: string) => void
@@ -28,6 +32,8 @@ export const GlobalContext = createContext<GlobalContextProps>({
       additionalDiagnosis: []
     },
     medications: [],
-    orders: []
+    orders: [],
+    allergies: [],
+    physicalExaminations: []
   }
 })

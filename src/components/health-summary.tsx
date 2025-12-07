@@ -1,15 +1,17 @@
 // src/components/health-summary.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import type { Diagnoses, Medication, Order } from "@/types/ICDAutomation" // Ensure correct path
+import type { Diagnoses, Medication, Order, Allergy, PhysicalExamination } from "@/types/ICDAutomation" // Ensure correct path
 import { Button } from "./ui/button" // Ensure this is your Shadcn Button
 import { exportUcafForm } from "./generate-pdf" // Ensure correct path
-import { Stethoscope, Pill, ClipboardCheck, FileDown, Info } from "lucide-react" // Icons
+import { Stethoscope, Pill, ClipboardCheck, FileDown, Info, AlertTriangle, Activity } from "lucide-react" // Icons
 
 type HealthSummaryProps = {
   diagnoses?: Diagnoses
   medications?: Medication[]
   orders?: Order[]
+  allergies?: Allergy[]
+  physicalExaminations?: PhysicalExamination[]
 }
 
 const SectionWrapper: React.FC<{
@@ -47,12 +49,16 @@ const SectionWrapper: React.FC<{
 const HealthSummary = ({
   diagnoses,
   medications,
-  orders
+  orders,
+  allergies,
+  physicalExaminations
 }: HealthSummaryProps) => {
   const hasAnyData =
     diagnoses ||
     (medications && medications.length > 0) ||
-    (orders && orders.length > 0)
+    (orders && orders.length > 0) ||
+    (allergies && allergies.length > 0) ||
+    (physicalExaminations && physicalExaminations.length > 0)
 
   if (!hasAnyData) {
     return (
@@ -208,6 +214,87 @@ const HealthSummary = ({
             </li>
           ))}
         </ul>
+      </SectionWrapper>
+
+      {/* Allergies Section */}
+      <SectionWrapper
+        title="Allergies"
+        icon={<AlertTriangle className="mr-2.5 h-5 w-5" />}
+        isEmpty={!allergies || allergies.length === 0}
+      >
+        <ul className="space-y-1.5">
+          {allergies?.map((allergy) => (
+            <li
+              key={allergy.code}
+              className="flex items-center space-x-2 p-2.5 bg-muted/40 rounded-md border border-border/70 hover:bg-muted/50 transition-colors"
+            >
+              <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+                {allergy.code}
+              </Badge>
+              <div className="flex-1">
+                <span className="text-sm font-medium text-foreground/90">
+                  {allergy.name}
+                </span>
+                {allergy.description && (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {allergy.description}
+                  </p>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </SectionWrapper>
+
+      {/* Physical Examinations Section */}
+      <SectionWrapper
+        title="Physical Examinations"
+        icon={<Activity className="mr-2.5 h-5 w-5" />}
+        isEmpty={!physicalExaminations || physicalExaminations.length === 0}
+      >
+        <div className="space-y-3">
+          {physicalExaminations?.map((exam) => (
+            <div
+              key={exam.code}
+              className="p-3 border border-border/70 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center space-x-2">
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+                    {exam.code}
+                  </Badge>
+                  <span className="font-semibold text-sm text-foreground/90">
+                    {exam.name}
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                {exam.type && (
+                  <div>
+                    <span className="font-medium text-foreground/70">Type:</span>{" "}
+                    {exam.type}
+                  </div>
+                )}
+                {exam.mentionedLinkedExaminations && 
+                 Array.isArray(exam.mentionedLinkedExaminations) && 
+                 exam.mentionedLinkedExaminations.length > 0 && (
+                  <div className="sm:col-span-2">
+                    <span className="font-medium text-foreground/70">
+                      Linked Examinations:
+                    </span>{" "}
+                    <span className="text-foreground/80">
+                      {exam.mentionedLinkedExaminations.map((linked: any) => 
+                        typeof linked === 'string' 
+                          ? linked 
+                          : (linked?.name || linked?.code || JSON.stringify(linked))
+                      ).join(", ")}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
       </SectionWrapper>
 
       {/* Export Button - Only show if there's relevant data to export */}

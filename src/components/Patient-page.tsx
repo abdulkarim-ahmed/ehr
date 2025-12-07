@@ -152,6 +152,7 @@ export default function PatientPage({
             <VitalSignsForm
               chiefComplaint={summaryData.chiefComplaint || ""}
               significantSigns={summaryData.significantSigns || ""}
+              sections={summaryData.sections || []}
             />
           </CardContent>
         </Card>
@@ -195,11 +196,13 @@ export default function PatientPage({
           <CardContent className="p-0">
             {" "}
             {/* Let HealthSummary control its internal padding */}
-            {icdData.diagnoses || icdData.medications || icdData.orders ? (
+            {icdData.diagnoses || icdData.medications || icdData.orders || (icdData.allergies && icdData.allergies.length > 0) || (icdData.physicalExaminations && icdData.physicalExaminations.length > 0) ? (
               <HealthSummary
                 diagnoses={icdData.diagnoses}
                 medications={icdData.medications}
                 orders={icdData.orders}
+                allergies={icdData.allergies}
+                physicalExaminations={icdData.physicalExaminations}
               />
             ) : (
               <div className="p-[var(--card-padding)] text-center text-muted-foreground flex flex-col items-center justify-center h-full min-h-[200px]">
