@@ -70,6 +70,7 @@ export default function App() {
   const [refreshToken, setRefreshToken] = useState("")
   const [env, setEnv] = useState("dev")
   const [iframeTheme, setIframeTheme] = useState("")
+  const [customIframeBaseUrl, setCustomIframeBaseUrl] = useState("")
   const [CTA, setCTA] = useState("")
   const [loginEmail, setLoginEmail] = useState("")
   const [loginPassword, setLoginPassword] = useState("")
@@ -95,6 +96,7 @@ export default function App() {
     localStorage.removeItem("refreshToken")
     localStorage.removeItem("env")
     localStorage.removeItem("iframeTheme")
+    localStorage.removeItem("customIframeBaseUrl")
     setToken("")
     setRefreshToken("")
     setLoginEmail("")
@@ -173,9 +175,11 @@ export default function App() {
     const storedRefreshToken = localStorage.getItem("refreshToken")
     const localEnv = localStorage.getItem("env")
     const localIframeTheme = localStorage.getItem("iframeTheme")
+    const localCustomIframeBaseUrl = localStorage.getItem("customIframeBaseUrl")
 
     setEnv(localEnv || "dev")
     setIframeTheme(localIframeTheme || "")
+    setCustomIframeBaseUrl(localCustomIframeBaseUrl || "")
 
     if (storedToken) {
       setToken(storedToken)
@@ -262,6 +266,11 @@ export default function App() {
       }
       localStorage.setItem("env", env)
       localStorage.setItem("iframeTheme", iframeTheme)
+      if (customIframeBaseUrl.trim()) {
+        localStorage.setItem("customIframeBaseUrl", customIframeBaseUrl.trim())
+      } else {
+        localStorage.removeItem("customIframeBaseUrl")
+      }
       setIsAuthenticated(true)
       setLoginPassword("")
       setTokenStatus({
@@ -411,6 +420,18 @@ export default function App() {
                     className="h-11"
                   />
                 </div>
+              <div>
+                <label className="text-sm font-medium text-foreground/80 mb-[var(--spacing-xs)] block">
+                  Iframe Base URL (Optional)
+                </label>
+                <Input
+                  type="url"
+                  placeholder="https://example.com/iframe?access_token="
+                  value={customIframeBaseUrl}
+                  onChange={(e) => setCustomIframeBaseUrl(e.target.value)}
+                  className="h-11"
+                />
+              </div>
               </div>
               <div className="space-y-[var(--spacing-sm)]">
                 {" "}
@@ -577,7 +598,10 @@ export default function App() {
         {patient ? (
           <PatientPage
             token={token}
-            iframeUrl={ENVS[env as keyof typeof ENVS]}
+            iframeUrl={
+              (customIframeBaseUrl || "").trim() ||
+              ENVS[env as keyof typeof ENVS]
+            }
             theme={iframeTheme}
             CTA={CTA}
             patient={patient}
