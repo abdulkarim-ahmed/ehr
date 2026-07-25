@@ -24,7 +24,7 @@ const handleSummary = (message: any): SummaryData => {
 
   const allSections: Array<{ title: string; content: string }> = []
 
-  // Process each section
+    // Process each section
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   // biome-ignore lint/complexity/noForEach: <explanation>
   message?.summary?.forEach((section: any) => {
@@ -166,16 +166,16 @@ export const GlobalContextProvider = ({
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log('Message received from parent:', event.data)
-      
       // if no type this means data is of summary
       if (!event?.data?.type) {
+        console.log("Message received from parent:", event.data)
         const summary = handleSummary(event.data)
 
         // Set state
         setSummaryData(summary)
         // FIX: Add enum for this
       } else if (event.data.type === "icd-automation") {
+        console.log("Message received from parent:", event.data)
         setIcdData({
           diagnoses: event.data.data.diagnoses,
           medications: event.data.data.medications,
@@ -184,6 +184,7 @@ export const GlobalContextProvider = ({
           physicalExaminations: event.data.data.physicalExaminations || []
         })
       } else if (event.data.type === "get-patient-history") {
+        console.log("Message received from parent:", event.data)
         sendMessageToIframe(initialConsultationsData)
       }
     }
